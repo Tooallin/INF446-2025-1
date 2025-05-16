@@ -1,0 +1,94 @@
+reset;
+model mctoptw.mod;
+data juguete.dat;
+#data c101.dat;
+#data c102.dat;
+#data c103.dat;
+#data c104.dat;
+#data c105.dat;
+#data c106.dat;
+#data c107.dat;
+#data c108.dat;
+#data c109.dat;
+#data r101.dat;
+#data r102.dat;
+#data r103.dat;
+#data r104.dat;
+#data r105.dat;
+#data r106.dat;
+#data r107.dat;
+#data r108.dat;
+#data r109.dat;
+#data r110.dat;
+#data r111.dat;
+#data r112.dat;
+#data rc101.dat;
+#data rc102.dat;
+#data rc103.dat;
+#data rc104.dat;
+#data rc105.dat;
+#data rc106.dat;
+#data rc107.dat;
+#data rc108.dat;
+
+/* GUROBI */
+option solver "./gurobi";
+option gurobi_options 'timelim = 60';
+
+/* PRINTS INSTANCIA*/
+printf "\n\n:::::::::::::::::::::::::: Descripcion de la Instancia ::::::::::::::::::::::::::\n\n";
+printf "Nodo inicial         : %s \n", o;
+printf "Nodo final           : %s \n", s;
+printf "Tmax                 : %s \n", TM;
+printf "Numero de nodos      : %s \n", card(N);
+printf "Numero de rutas      : %s \n", card(M);
+printf "Numero de categorias : %s \n", card(Z);
+for {z in Z} {
+	printf " - Cuota de la categoria %s : %s \n", z, E[z];
+}
+
+/* TIEMPOS Y SOLVE */
+param Ttotal default 0;
+param TCPU default 0;
+
+let Ttotal := time();
+solve;
+let TCPU := time() - Ttotal;
+
+/* PRINTS SOLUCION */
+param ultimo;
+param siguiente;
+
+printf "\n\n:::::::::::::::::::::::::: Solucion Encontrada ::::::::::::::::::::::::::\n\n";
+
+/* FUNCIONES OBJETIVOS */
+for {oo in objetivos} {
+	printf "Funcion Objetivo %s : %s \n", oo, F[oo];
+}
+/* TIEMPO DE EJECUCION */
+printf "Tiempo CPU         : %s \n\n", TCPU;
+
+/* INFORMACION DE LAS RUTAS */
+for {m in M} {
+    printf "Informacion Ruta : %s\n", m;
+    printf " - Nodos visitados   : ";
+    let ultimo := 0;
+    printf "%s -> ", ultimo;
+    for {step in 1..card(N)} {
+        let siguiente := -1;
+        for {j in N: j != ultimo and x[ultimo,j,m] = 1} {
+            let siguiente := j;
+            break;
+        }
+        if siguiente = s then {
+        	printf "%s", siguiente;
+        	break;
+        }
+        printf "%s (%s) -> ", siguiente, tt[siguiente,m];
+        let ultimo := siguiente;
+    }
+    printf "\n";
+    printf " - Puntaje           : %s\n", P[m];
+    printf " - Tiempo de la ruta : %s\n\n", tt[s,m];
+	
+}

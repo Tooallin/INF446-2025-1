@@ -1,0 +1,119 @@
+reset;
+model toptw.mod;
+#data TOPTW/c101.dat;
+#data TOPTW/c102.dat;
+#data TOPTW/c103.dat;
+#data TOPTW/c104.dat;
+#data TOPTW/c105.dat;
+#data TOPTW/c106.dat;
+#data TOPTW/c107.dat;
+#data TOPTW/c108.dat;
+#data TOPTW/c109.dat;
+#data TOPTW/c201.dat;
+#data TOPTW/c202.dat;
+#data TOPTW/c203.dat;
+#data TOPTW/c204.dat;
+#data TOPTW/c205.dat;
+#data TOPTW/c206.dat;
+#data TOPTW/c207.dat;
+#data TOPTW/c208.dat;
+#data TOPTW/r101.dat;
+#data TOPTW/r102.dat;
+#data TOPTW/r103.dat;
+#data TOPTW/r104.dat;
+#data TOPTW/r105.dat;
+#data TOPTW/r106.dat;
+#data TOPTW/r107.dat;
+#data TOPTW/r108.dat;
+#data TOPTW/r109.dat;
+#data TOPTW/r110.dat;
+#data TOPTW/r111.dat;
+#data TOPTW/r112.dat;
+#data TOPTW/r201.dat;
+#data TOPTW/r202.dat;
+#data TOPTW/r203.dat;
+#data TOPTW/r204.dat;
+#data TOPTW/r205.dat;
+#data TOPTW/r206.dat;
+data TOPTW/r207.dat;
+#data TOPTW/r208.dat;
+#data TOPTW/r209.dat;
+#data TOPTW/r210.dat;
+#data TOPTW/r211.dat;
+#data TOPTW/rc101.dat;
+#data TOPTW/rc102.dat;
+#data TOPTW/rc103.dat;
+#data TOPTW/rc104.dat;
+#data TOPTW/rc105.dat;
+#data TOPTW/rc106.dat;
+#data TOPTW/rc107.dat;
+#data TOPTW/rc108.dat;
+
+/* GUROBI */
+option solver "./gurobi";
+option gurobi_options 'timelim = 300';
+
+/* PRINTS INSTANCIA*/
+printf "\n\n:::::::::::::::::::::::::: Descripcion de la Instancia ::::::::::::::::::::::::::\n\n";
+printf "Nodo inicial         : %s \n", o;
+printf "Nodo final           : %s \n", s;
+printf "Numero de nodos      : %s \n", card(N);
+printf "Numero de rutas      : %s \n", card(M);
+printf "Numero de categorias : %s \n", card(Z);
+
+/* TIEMPOS Y SOLVE */
+param Ttotal default 0;
+param TCPU default 0;
+
+let Ttotal := time();
+solve;
+let TCPU := time() - Ttotal;
+
+/* PRINTS SOLUCION */
+param ultimo;
+param siguiente;
+
+printf "\n\n:::::::::::::::::::::::::: Solucion Encontrada ::::::::::::::::::::::::::\n\n";
+
+/* FUNCIONES OBJETIVOS */
+for {oo in objetivos} {
+	printf "Funcion Objetivo %s : %s \n", oo, F[oo];
+}
+
+/* TIEMPO MAXIMO Y CUOTAS */
+printf "Tiempo Maximo      : %s \n", TM;
+for {z in Z} {
+	printf "Cuota Categoria %s : %s \n", z, E[z];
+}
+
+/* TIEMPO DE EJECUCION */
+printf "Tiempo CPU         : %s \n\n", TCPU;
+
+/* INFORMACION DE LAS RUTAS */
+for {m in M} {
+    printf "Informacion Ruta : %s\n", m;
+    printf " - Nodos visitados   : ";
+    let ultimo := 0;
+    printf "%s -> ", ultimo;
+    for {step in 1..card(N)} {
+        let siguiente := -1;
+        for {j in N: j != ultimo and x[ultimo,j,m] = 1} {
+            let siguiente := j;
+            break;
+        }
+        
+        if siguiente = s then {
+        	printf "%s", siguiente;
+        	break;
+        }
+        printf "%s (%s) -> ", siguiente, tt[siguiente,m];
+        let ultimo := siguiente;
+    }
+    printf "\n";
+    printf " - Tiempo de la ruta : %s\n", tt[s,m];
+    printf " - Puntaje           : %s\n", P[m];
+    for {z in Z} {
+    	 printf " - Cuota categoria %s : %s\n", z, EE[m,z];
+    }
+    printf "\n";
+}
