@@ -45,7 +45,8 @@ int main (int argc, char **argv) {
 	FILE *fpt4;
 	FILE *fpt5;
 
-	struct problem_instance *pi = malloc(sizeof(problem_instance));
+	problem_instance *pi = malloc(sizeof(problem_instance));
+	char *instance_route;
 	population *parent_pop;
 	population *child_pop;
 	population *mixed_pop;
@@ -72,7 +73,7 @@ int main (int argc, char **argv) {
 	fprintf(fpt4,"# This file contains the data of all generations\n");
 	fprintf(fpt5,"# This file contains information about inputs as read by the program\n");
 
-	char * instance_route = argv[2];
+	instance_route = argv[2];
 	readInputFile(instance_route, pi);
 
 	popsize = atoi(argv[3]);

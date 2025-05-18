@@ -314,77 +314,77 @@ void read_t(FILE *f, problem_instance *pi) {
 }
 
 int readInputFile(char* filePath, problem_instance *pi) {
-	int i;
 	int debug=1;
 	FILE* fh=fopen(filePath, "r");
 
 	/*check if file exists*/
-	if ( fh==NULL ){
+	if (fh == NULL){
 		printf("File does not exists %s", filePath);
 		return 0;
 	}
 
-	if(debug) printf("Reading: %s \n", filePath);
+	if (debug) printf("Reading: %s \n", filePath);
 
 	findDef(fh, "o:=");
 	read_o(fh, pi);
-	if(debug) printf("End read_o! \n");
+	if (debug) printf("End read_o! \n");
 
 	findDef(fh, "s:=");
 	read_s(fh, pi);
-	if(debug) printf("End read_s! \n");
+	if (debug) printf("End read_s! \n");
 
 	findDef(fh, "POI:=");
 	read_POI(fh, pi);
-	if(debug) printf("End read_POI! \n");
+	if (debug) printf("End read_POI! \n");
 
 	findDef(fh, "M:=");
 	read_M(fh, pi);
-	if(debug) printf("End read_M! \n");
+	if (debug) printf("End read_M! \n");
 
 	findDef(fh, "Z:=");
 	read_Z(fh, pi);
-	if(debug) printf("End read_Z! \n");
+	if (debug) printf("End read_Z! \n");
 
 	findDef(fh, "TM:=");
 	read_TM(fh, pi);
-	if(debug) printf("End read_TM! \n");
+	if (debug) printf("End read_TM! \n");
 
 	findDef(fh, "E:=");
 	read_E(fh, pi);
-	if(debug) printf("End read_E! \n");
+	if (debug) printf("End read_E! \n");
 
 	findDef(fh, "e:=");
 	read_e(fh, pi);
-	if(debug) printf("End read_e! \n");
+	if (debug) printf("End read_e! \n");
 
 	findDef(fh, "SCORE:=");
 	read_SCORE(fh, pi);
-	if(debug) printf("End read_SCORE! \n");
+	if (debug) printf("End read_SCORE! \n");
 
 	findDef(fh, "OT:=");
 	read_OT(fh, pi);
-	if(debug) printf("End read_OT! \n");
+	if (debug) printf("End read_OT! \n");
 
 	findDef(fh, "TT:=");
 	read_TT(fh, pi);
-	if(debug) printf("End read_TT! \n");
+	if (debug) printf("End read_TT! \n");
 
 	findDef(fh, "CT:=");
 	read_CT(fh, pi);
-	if(debug) printf("End read_CT! \n");
+	if (debug) printf("End read_CT! \n");
 
 	findDef(fh, "t:=");
 	read_t(fh, pi);
-	if(debug) printf("End read_t! \n");
+	if (debug) printf("End read_t! \n");
 
 	fclose(fh);
-	if(debug) printf("End Reading! \n");
+	if (debug) printf("End Reading! \n");
 
-	ngene = pi->set_POI + pi->set_M;
+	gene_length = pi->nPOI + pi->set_M;
+	n_routes = pi->set_M;
 
 	printProblemInstance(pi);
-	if(debug) getchar();
+	if (debug) getchar();
 
 	return 0;
 }

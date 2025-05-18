@@ -80,14 +80,15 @@ void split_sequence(int N, int M, int *sequence) {
 	int total_parts = M + 1;
 	int base = N / total_parts;
 	int extra = N % total_parts;
-
 	int write_idx = N + M - 1;
 	int read_idx = N - 1;
+	int part;
+	int i;
 
-	for (int part = M; part >= 0; part--) {
+	for (part = M; part >= 0; part--) {
 		int size = base + (part < extra ? 1 : 0);
 
-		for (int i = 0; i < size; i++) {
+		for (i = 0; i < size; i++) {
 			sequence[write_idx--] = sequence[read_idx--];
 		}
 
@@ -99,23 +100,24 @@ void split_sequence(int N, int M, int *sequence) {
 
 /* Create a random sequence of POI's */
 void random_sequence(int N, int *sequence) {
-	for (int i = 0; i < N; i++) {
+	int i, j, temp;
+
+	for (i = 0; i < N; i++) {
 		sequence[i] = i + 1;
 	}
 
-	for (int i = N - 1; i > 0; i--) {
-		int j = rnd(0, i);
-		int temp = sequence[i];
+	for (i = N - 1; i > 0; i--) {
+		j = rnd(0, i);
+		temp = sequence[i];
 		sequence[i] = sequence[j];
-		sequence[j] = sequence;
+		sequence[j] = temp;
 	}
 }
 
 /* Fetch a single random number between 0.0 and 1.0 */
 double randomperc() {
 	jrand++;
-	if(jrand>=55)
-	{
+	if (jrand >= 55) {
 			jrand = 1;
 			advance_random();
 	}

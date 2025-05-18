@@ -50,7 +50,8 @@ typedef struct {
 	double **param_t;
 } problem_instance;
 
-extern int ngene;
+extern int gene_length;
+extern int n_routes;
 extern int nreal;
 extern int nbin;
 extern int nobj;
@@ -85,17 +86,28 @@ void allocate_memory_ind (individual *ind);
 void deallocate_memory_pop (population *pop, int size);
 void deallocate_memory_ind (individual *ind);
 
-double maximum (double a, double b);
-double minimum (double a, double b);
+double maximum(double a, double b);
+double minimum(double a, double b);
 
-void crossover (individual *parent1, individual *parent2, individual *child1, individual *child2);
-void realcross (individual *parent1, individual *parent2, individual *child1, individual *child2);
-void bincross (individual *parent1, individual *parent2, individual *child1, individual *child2);
+/* Functions from crossover.c */
+void crossover(individual *parent1, individual *parent2, individual *child1, individual *child2);
+void rbx(individual *parent1, individual *parent2, individual *child1, individual *child2);
 
+/* Functions from mutation.c */
+void mutation_pop(population *pop);
+void mutation_ind(individual *ind);
+void ars(individual *ind);
+void ers(individual *ind);
+
+/* Functions from reader.c */
+int readInputFile(char* filePath, problem_instance *pi);
+
+/* Functions from crowddist.c */
 void assign_crowding_distance_list (population *pop, list *lst, int front_size);
 void assign_crowding_distance_indices (population *pop, int c1, int c2);
 void assign_crowding_distance (population *pop, int *dist, int **obj_array, int front_size);
 
+/* Functions from decode.c */
 void decode_pop (population *pop);
 void decode_ind (individual *ind);
 
@@ -109,19 +121,14 @@ void evaluate_ind (individual *ind);
 void fill_nondominated_sort (population *mixed_pop, population *new_pop);
 void crowding_fill (population *mixed_pop, population *new_pop, int count, int front_size, list *cur);
 
-void initialize_pop (population *pop);
-void initialize_ind (individual *ind);
+void initialize_pop(population *pop, problem_instance *pi);
+void initialize_ind(individual *ind, problem_instance *pi);
 
 void insert (list *node, int x);
 list* del (list *node);
 
 void merge(population *pop1, population *pop2, population *pop3);
 void copy_ind (individual *ind1, individual *ind2);
-
-void mutation_pop (population *pop);
-void mutation_ind (individual *ind);
-void bin_mutate_ind (individual *ind);
-void real_mutate_ind (individual *ind);
 
 void test_problem (double *xreal, double *xbin, int **gene, double *obj, double *constr);
 

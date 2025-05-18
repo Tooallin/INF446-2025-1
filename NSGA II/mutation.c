@@ -8,94 +8,94 @@
 # include "rand.h"
 
 /* Function to perform mutation in a population */
-void mutation_pop (population *pop)
-{
-    int i;
-    for (i=0; i<popsize; i++)
-    {
-        mutation_ind(&(pop->ind[i]));
-    }
-    return;
+void mutation_pop(population *pop) {
+	int i;
+	for (i = 0; i < popsize; i++) {
+		mutation_ind(&(pop->ind[i]));
+	}
+	return;
 }
 
 /* Function to perform mutation of an individual */
-void mutation_ind (individual *ind)
-{
-    if (nreal!=0)
-    {
-        real_mutate_ind(ind);
-    }
-    if (nbin!=0)
-    {
-        bin_mutate_ind(ind);
-    }
-    return;
+void mutation_ind(individual *ind) {
+	int choice;
+	choice = rnd(1,2);
+	if (choice == 1) {
+		ars(ind);
+	} else {
+		ers(ind);
+	}
+	return;
 }
 
-/* Routine for binary mutation of an individual */
-void bin_mutate_ind (individual *ind)
-{
-    int j, k;
-    double prob;
-    for (j=0; j<nbin; j++)
-    {
-        for (k=0; k<nbits[j]; k++)
-        {
-            prob = randomperc();
-            if (prob <=pmut_bin)
-            {
-                if (ind->gene[j][k] == 0)
-                {
-                    ind->gene[j][k] = 1;
-                }
-                else
-                {
-                    ind->gene[j][k] = 0;
-                }
-                nbinmut+=1;
-            }
-        }
-    }
-    return;
+/* Routine for intra route swap mutation */
+void ars(individual *ind) {
+	int start, end;
+	int poi1, poi2, temp;
+	int count, route;
+	route = rnd(1, n_routes);
+	start = 0; count = 1;
+	while (count < route) {
+		if (ind->gene[start] == -1) {
+			count++;
+		}
+		start++;
+	}
+	end = 0; count = 1;
+	while (count < route + 1) {
+		if (ind->gene[end] == -1) {
+			count++;
+		}
+		end++;
+	}
+	poi1 = rnd(start, end - 1);
+	poi2 = rnd(start, end - 1);
+	temp = ind->gene[poi1];
+	ind->gene[poi1] = ind->gene[poi2];
+	ind->gene[poi2] = temp;
+	return;
 }
 
-/* Routine for real polynomial mutation of an individual */
-void real_mutate_ind (individual *ind)
-{
-    int j;
-    double rnd, delta1, delta2, mut_pow, deltaq;
-    double y, yl, yu, val, xy;
-    for (j=0; j<nreal; j++)
-    {
-        if (randomperc() <= pmut_real)
-        {
-            y = ind->xreal[j];
-            yl = min_realvar[j];
-            yu = max_realvar[j];
-            delta1 = (y-yl)/(yu-yl);
-            delta2 = (yu-y)/(yu-yl);
-            rnd = randomperc();
-            mut_pow = 1.0/(eta_m+1.0);
-            if (rnd <= 0.5)
-            {
-                xy = 1.0-delta1;
-                val = 2.0*rnd+(1.0-2.0*rnd)*(pow(xy,(eta_m+1.0)));
-                deltaq =  pow(val,mut_pow) - 1.0;
-            }
-            else
-            {
-                xy = 1.0-delta2;
-                val = 2.0*(1.0-rnd)+2.0*(rnd-0.5)*(pow(xy,(eta_m+1.0)));
-                deltaq = 1.0 - (pow(val,mut_pow));
-            }
-            y = y + deltaq*(yu-yl);
-            if (y<yl)
-                y = yl;
-            if (y>yu)
-                y = yu;
-            ind->xreal[j] = y;
-            nrealmut+=1;
-        }
-    }
-    return;
+/* Routine for inter route swap mutation */
+void ers(individual *ind) {
+	int start1, end1;
+	int start2, end2;
+	int poi1, poi2, temp;
+	int count, route1, route2;
+	route1 = rnd(1, n_routes);
+	start1 = 0; count = 1;
+	while (count < route1) {
+		if (ind->gene[start1] == -1) {
+			count++;
+		}
+		start1++;
+	}
+	end1 = 0; count = 1;
+	while (count < route1 + 1) {
+		if (ind->gene[end1] == -1) {
+			count++;
+		}
+		end1++;
+	}
+	route2 = rnd(1, n_routes);
+	start2 = 0; count = 1;
+	while (count < route2) {
+		if (ind->gene[start2] == -1) {
+			count++;
+		}
+		start2++;
+	}
+	end2 = 0; count = 1;
+	while (count < route2 + 1) {
+		if (ind->gene[end2] == -1) {
+			count++;
+		}
+		end2++;
+	}
+	poi1 = rnd(start1, end1 - 1);
+	poi2 = rnd(start2, end2 - 1);
+	temp = ind->gene[poi1];
+	ind->gene[poi1] = ind->gene[poi2];
+	ind->gene[poi2] = temp;
+	return;
 }
