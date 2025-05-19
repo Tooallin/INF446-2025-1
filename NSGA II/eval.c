@@ -24,6 +24,7 @@ void evaluate_ind(individual *ind, problem_instance *pi) {
 
 	/* Evaluate objective function 1 */
 	ind->obj[0] = 0;
+	j = 0;
 	for (i = 1; i < n_routes; i++) {
 		while (ind->gene[j] != -1) {
 			ind->obj[0] += pi->set_POI[ind->gene[j]-1].SCORE;

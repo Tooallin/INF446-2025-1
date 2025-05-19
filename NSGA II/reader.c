@@ -9,7 +9,6 @@
 
 void findDef(FILE *f, char *def) {
 	char word[1024];
-	/* assumes no word exceeds length of 1023 */
 	while (fscanf(f, " %1023s", word)) {
 		if(strcmp(word,def) == 0) break;
 	}
@@ -36,7 +35,7 @@ int countWords(char *line){
 }
 
 void read_o(FILE *f, problem_instance *pi) {
-	int debug=0, param_o;
+	int debug = 0, param_o;
 	char line[1024];
 
 	fgets(line, sizeof(line), f);
@@ -54,7 +53,7 @@ void read_o(FILE *f, problem_instance *pi) {
 }
 
 void read_s(FILE *f, problem_instance *pi) {
-	int debug=0, param_s;
+	int debug = 0, param_s;
 	char line[1024];
 
 	fgets(line, sizeof(line), f);
@@ -72,7 +71,7 @@ void read_s(FILE *f, problem_instance *pi) {
 }
 
 void read_POI(FILE *f, problem_instance *pi) {
-	int debug=0, id=0;
+	int debug = 0, id=0;
 	char * token;
 	char line[1024];
 
@@ -102,7 +101,7 @@ void read_POI(FILE *f, problem_instance *pi) {
 }
 
 void read_M(FILE *f, problem_instance *pi) {
-	int debug=0;
+	int debug = 0;
 	char line[1024];
 
 	fgets(line, sizeof(line), f);
@@ -116,7 +115,7 @@ void read_M(FILE *f, problem_instance *pi) {
 }
 
 void read_Z(FILE *f, problem_instance *pi) {
-	int debug=0;
+	int debug = 0;
 	char line[1024];
 
 	fgets(line, sizeof(line), f);
@@ -134,7 +133,7 @@ void read_Z(FILE *f, problem_instance *pi) {
 }
 
 void read_TM(FILE *f, problem_instance *pi) {
-	int debug=0, param_TM;
+	int debug = 0, param_TM;
 	char line[1024];
 
 	fgets(line, sizeof(line), f);
@@ -150,7 +149,7 @@ void read_TM(FILE *f, problem_instance *pi) {
 }
 
 void read_E(FILE *f, problem_instance *pi) {
-	int debug=0;
+	int debug = 0;
 	int idE;
 	char *id, *param_E;
 	char line[1024];
@@ -187,7 +186,7 @@ void read_e(FILE *f, problem_instance *pi) {
 }
 
 void read_SCORE(FILE *f, problem_instance *pi) {
-	int debug=0;
+	int debug = 0;
 	int idPOI;
 	char *id, *SCORE;
 	char line[1024];
@@ -211,7 +210,7 @@ void read_SCORE(FILE *f, problem_instance *pi) {
 }
 
 void read_OT(FILE *f, problem_instance *pi) {
-	int debug=0;
+	int debug = 0;
 	int idPOI;
 	char *id, *OT;
 	char line[1024];
@@ -235,7 +234,7 @@ void read_OT(FILE *f, problem_instance *pi) {
 }
 
 void read_TT(FILE *f, problem_instance *pi) {
-	int debug=0;
+	int debug = 0;
 	int idPOI;
 	char *id, *TT;
 	char line[1024];
@@ -259,7 +258,7 @@ void read_TT(FILE *f, problem_instance *pi) {
 }
 
 void read_CT(FILE *f, problem_instance *pi) {
-	int debug=0;
+	int debug = 0;
 	int idPOI;
 	char *id, *CT;
 	char line[1024];
@@ -283,7 +282,7 @@ void read_CT(FILE *f, problem_instance *pi) {
 }
 
 void read_t(FILE *f, problem_instance *pi) {
-	int debug=0, i;
+	int debug = 0, i;
 	int totalNodes = pi->nPOI + 2;
 	int idFrom, idTo;
 	char *from, *to, *distance;
@@ -314,7 +313,7 @@ void read_t(FILE *f, problem_instance *pi) {
 }
 
 int readInputFile(char* filePath, problem_instance *pi) {
-	int debug=1;
+	int debug = 0;
 	FILE* fh=fopen(filePath, "r");
 
 	/*check if file exists*/
@@ -383,7 +382,7 @@ int readInputFile(char* filePath, problem_instance *pi) {
 	gene_length = pi->nPOI + pi->set_M;
 	n_routes = pi->set_M;
 
-	printProblemInstance(pi);
+	if (debug) printProblemInstance(pi);
 	if (debug) getchar();
 
 	return 0;
