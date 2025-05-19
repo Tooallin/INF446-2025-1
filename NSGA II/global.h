@@ -115,8 +115,9 @@ void onthefly_display (population *pop, FILE *gp, int ii);
 
 int check_dominance (individual *a, individual *b);
 
-void evaluate_pop (population *pop);
-void evaluate_ind (individual *ind);
+/* Functions from eval.c */
+void evaluate_pop (population *pop, problem_instance *pi);
+void evaluate_ind (individual *ind, problem_instance *pi);
 
 void fill_nondominated_sort (population *mixed_pop, population *new_pop);
 void crowding_fill (population *mixed_pop, population *new_pop, int count, int front_size, list *cur);

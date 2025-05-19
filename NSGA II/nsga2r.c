@@ -19,6 +19,8 @@ double pmut_real;
 double pmut_bin;
 double eta_c;
 double eta_m;
+int gene_length;
+int n_routes;
 int ngen;
 int nbinmut;
 int nrealmut;
@@ -155,7 +157,7 @@ int main (int argc, char **argv) {
 	initialize_pop(parent_pop, pi);
 	printf("\n Initialization done, now performing first generation\n");
 	decode_pop(parent_pop);
-	evaluate_pop(parent_pop);
+	evaluate_pop(parent_pop, pi);
 	assign_rank_and_crowding_distance(parent_pop);
 	report_pop(parent_pop, fpt1);
 	fprintf(fpt4,"# gen = 1\n");
@@ -176,7 +178,7 @@ int main (int argc, char **argv) {
 		selection(parent_pop, child_pop);
 		mutation_pop(child_pop);
 		decode_pop(child_pop);
-		evaluate_pop(child_pop);
+		evaluate_pop(child_pop, pi);
 		merge(parent_pop, child_pop, mixed_pop);
 		fill_nondominated_sort (mixed_pop, parent_pop);
 		/* Comment following four lines if information for all
