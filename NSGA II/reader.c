@@ -381,6 +381,8 @@ int readInputFile(char* filePath, problem_instance *pi) {
 
 	gene_length = pi->nPOI + pi->set_M;
 	n_routes = pi->set_M;
+	n_objectives = 3;
+	n_constraints = 4;
 
 	if (debug) printProblemInstance(pi);
 	if (debug) getchar();

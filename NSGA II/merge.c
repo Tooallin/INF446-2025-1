@@ -28,10 +28,10 @@ void copy_ind(individual *ind1, individual *ind2) {
 	for (i = 0; i < gene_length; i++) {
 		ind2->gene[i] = ind1->gene[i];
 	}
-	for (i = 0; i < nobj; i++) {
+	for (i = 0; i < n_objectives; i++) {
 		ind2->obj[i] = ind1->obj[i];
 	}
-	for (i = 0; i < ncon; i++) {
+	for (i = 0; i < n_constraints; i++) {
 		ind2->constr[i] = ind1->constr[i];
 	}
 	return;

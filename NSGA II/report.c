@@ -11,10 +11,10 @@
 void report_pop(population *pop, FILE *fpt) {
 	int i, j;
 	for (i = 0; i < popsize; i++) {
-		for (j = 0; j < nobj; j++) {
+		for (j = 0; j < n_objectives; j++) {
 			fprintf(fpt,"%e\t", pop->ind[i].obj[j]);
 		}
-		for (j = 0; j < ncon; j++) {
+		for (j = 0; j < n_constraints; j++) {
 			fprintf(fpt,"%e\t", pop->ind[i].constr[j]);
 		}
 		for (j = 0; j < gene_length; j++) {
@@ -32,10 +32,10 @@ void report_feasible(population *pop, FILE *fpt) {
 	int i, j;
 	for (i = 0; i < popsize; i++) {
 		if (pop->ind[i].constr_violation == 0.0 && pop->ind[i].rank == 1) {
-			for (j = 0; j < nobj; j++) {
+			for (j = 0; j < n_objectives; j++) {
 				fprintf(fpt,"%e\t", pop->ind[i].obj[j]);
 			}
-			for (j = 0; j < ncon; j++) {
+			for (j = 0; j < n_constraints; j++) {
 				fprintf(fpt,"%e\t", pop->ind[i].constr[j]);
 			}
 			for (j = 0; j < gene_length; j++) {

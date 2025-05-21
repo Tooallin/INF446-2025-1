@@ -10,8 +10,8 @@
 
 int nreal;
 int nbin;
-int nobj;
-int ncon;
+int n_objectives;
+int n_constraints;
 int popsize;
 double pcross_real;
 double pcross_bin;
@@ -54,11 +54,11 @@ int main (int argc, char **argv) {
 	population *mixed_pop;
 
 	if (argc < 2) {
-		printf("\n Usage ./nsga2r instance_route random_seed popsize ngen nobj pcross_bin pmut_bin\n./nsga2r 0.123 b-Instancia14_cap2_relacion7UnoUnoUnoTodosDistintos.dat 100 100 2 0.6 0.01\n");
+		printf("\n Usage ./nsga2r instance_route random_seed popsize ngen pcross pmut \n ./nsga2r c101.dat 0.123 100 100 0.6 0.01\n");
 		exit(1);
 	}
 
-	seed = (double)atof(argv[1]);
+	seed = (double)atof(argv[2]);
 	if (seed <= 0.0 || seed >= 1.0) {
 		printf("\n Entered seed value is wrong, seed value must be in (0,1) \n");
 		exit(1);
@@ -75,7 +75,7 @@ int main (int argc, char **argv) {
 	fprintf(fpt4,"# This file contains the data of all generations\n");
 	fprintf(fpt5,"# This file contains information about inputs as read by the program\n");
 
-	instance_route = argv[2];
+	instance_route = argv[1];
 	readInputFile(instance_route, pi);
 
 	popsize = atoi(argv[3]);
@@ -92,21 +92,14 @@ int main (int argc, char **argv) {
 		exit (1);
 	}
 
-	nobj = atoi(argv[5]);
-	if (nobj < 1){
-		printf("\n number of objectives entered is : %d",nobj);
-		printf("\n Wrong number of objectives entered, hence exiting \n");
-		exit (1);
-	}
-
-	pcross_bin = atof(argv[6]);
+	pcross_bin = atof(argv[5]);
 	if (pcross_bin < 0.0 || pcross_bin > 1.0) {
 		printf("\n Probability of crossover entered is : %e",pcross_bin);
 		printf("\n Entered value of probability of crossover of binary variables is out of bounds, hence exiting \n");
 		exit (1);
 	}
 
-	pmut_bin = atof(argv[7]);
+	pmut_bin = atof(argv[6]);
 	if (pmut_bin < 0.0 || pmut_bin > 1.0) {
 		printf("\n Probability of mutation entered is : %e",pmut_bin);
 		printf("\n Entered value of probability  of mutation of binary variables is out of bounds, hence exiting \n");
@@ -116,7 +109,7 @@ int main (int argc, char **argv) {
 	printf("\n Input data successfully entered, now performing initialization \n");
 	fprintf(fpt5,"\n Population size = %d",popsize);
 	fprintf(fpt5,"\n Number of generations = %d",ngen);
-	fprintf(fpt5,"\n Number of objective functions = %d",nobj);
+	fprintf(fpt5,"\n Number of objective functions = %d",n_objectives);
 
 	fprintf(fpt5,"\n Number of binary variables = %d",nbin);
 	if (nbin != 0) {
@@ -137,10 +130,10 @@ int main (int argc, char **argv) {
 		}
 	}
 
-	fprintf(fpt1,"# of objectives = %d, # of constraints = %d, # of real_var = %d, # of bits of bin_var = %d, constr_violation, rank, crowding_distance\n", nobj, ncon, nreal, bitlength);
-	fprintf(fpt2,"# of objectives = %d, # of constraints = %d, # of real_var = %d, # of bits of bin_var = %d, constr_violation, rank, crowding_distance\n", nobj, ncon, nreal, bitlength);
-	fprintf(fpt3,"# of objectives = %d, # of constraints = %d, # of real_var = %d, # of bits of bin_var = %d, constr_violation, rank, crowding_distance\n", nobj, ncon, nreal, bitlength);
-	fprintf(fpt4,"# of objectives = %d, # of constraints = %d, # of real_var = %d, # of bits of bin_var = %d, constr_violation, rank, crowding_distance\n", nobj, ncon, nreal, bitlength);
+	fprintf(fpt1,"# of objectives = %d, # of constraints = %d, # of real_var = %d, # of bits of bin_var = %d, constr_violation, rank, crowding_distance\n", n_objectives, n_constraints, nreal, bitlength);
+	fprintf(fpt2,"# of objectives = %d, # of constraints = %d, # of real_var = %d, # of bits of bin_var = %d, constr_violation, rank, crowding_distance\n", n_objectives, n_constraints, nreal, bitlength);
+	fprintf(fpt3,"# of objectives = %d, # of constraints = %d, # of real_var = %d, # of bits of bin_var = %d, constr_violation, rank, crowding_distance\n", n_objectives, n_constraints, nreal, bitlength);
+	fprintf(fpt4,"# of objectives = %d, # of constraints = %d, # of real_var = %d, # of bits of bin_var = %d, constr_violation, rank, crowding_distance\n", n_objectives, n_constraints, nreal, bitlength);
 	
 	nbinmut = 0;
 	nrealmut = 0;

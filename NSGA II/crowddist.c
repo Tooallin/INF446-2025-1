@@ -26,9 +26,9 @@ void assign_crowding_distance_list (population *pop, list *lst, int front_size)
         pop->ind[lst->child->index].crowd_dist = INF;
         return;
     }
-    obj_array = (int **)malloc(nobj*sizeof(int*));
+    obj_array = (int **)malloc(n_objectives*sizeof(int*));
     dist = (int *)malloc(front_size*sizeof(int));
-    for (i=0; i<nobj; i++)
+    for (i=0; i<n_objectives; i++)
     {
         obj_array[i] = (int *)malloc(front_size*sizeof(int));
     }
@@ -39,7 +39,7 @@ void assign_crowding_distance_list (population *pop, list *lst, int front_size)
     }
     assign_crowding_distance (pop, dist, obj_array, front_size);
     free (dist);
-    for (i=0; i<nobj; i++)
+    for (i=0; i<n_objectives; i++)
     {
         free (obj_array[i]);
     }
@@ -66,9 +66,9 @@ void assign_crowding_distance_indices (population *pop, int c1, int c2)
         pop->ind[c2].crowd_dist = INF;
         return;
     }
-    obj_array = (int **)malloc(nobj*sizeof(int*));
+    obj_array = (int **)malloc(n_objectives*sizeof(int*));
     dist = (int *)malloc(front_size*sizeof(int));
-    for (i=0; i<nobj; i++)
+    for (i=0; i<n_objectives; i++)
     {
         obj_array[i] = (int *)malloc(front_size*sizeof(int));
     }
@@ -78,7 +78,7 @@ void assign_crowding_distance_indices (population *pop, int c1, int c2)
     }
     assign_crowding_distance (pop, dist, obj_array, front_size);
     free (dist);
-    for (i=0; i<nobj; i++)
+    for (i=0; i<n_objectives; i++)
     {
         free (obj_array[i]);
     }
@@ -90,7 +90,7 @@ void assign_crowding_distance_indices (population *pop, int c1, int c2)
 void assign_crowding_distance (population *pop, int *dist, int **obj_array, int front_size)
 {
     int i, j;
-    for (i=0; i<nobj; i++)
+    for (i=0; i<n_objectives; i++)
     {
         for (j=0; j<front_size; j++)
         {
@@ -102,11 +102,11 @@ void assign_crowding_distance (population *pop, int *dist, int **obj_array, int 
     {
         pop->ind[dist[j]].crowd_dist = 0.0;
     }
-    for (i=0; i<nobj; i++)
+    for (i=0; i<n_objectives; i++)
     {
         pop->ind[obj_array[i][0]].crowd_dist = INF;
     }
-    for (i=0; i<nobj; i++)
+    for (i=0; i<n_objectives; i++)
     {
         for (j=1; j<front_size-1; j++)
         {
@@ -127,7 +127,7 @@ void assign_crowding_distance (population *pop, int *dist, int **obj_array, int 
     {
         if (pop->ind[dist[j]].crowd_dist != INF)
         {
-            pop->ind[dist[j]].crowd_dist = (pop->ind[dist[j]].crowd_dist)/nobj;
+            pop->ind[dist[j]].crowd_dist = (pop->ind[dist[j]].crowd_dist)/n_objectives;
         }
     }
     return;

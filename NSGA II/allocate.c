@@ -20,8 +20,8 @@ void allocate_memory_pop(population *pop, int size) {
 /* Function to allocate memory to an individual */
 void allocate_memory_ind(individual *ind) {
 	ind->gene = (int *)malloc(gene_length * sizeof(int));
-	ind->obj = (double *)malloc(nobj * sizeof(double));
-	ind->constr = (double *)malloc(ncon * sizeof(double));
+	ind->obj = (double *)malloc(n_objectives * sizeof(double));
+	ind->constr = (double *)malloc(n_constraints * sizeof(double));
 	return;
 }
 

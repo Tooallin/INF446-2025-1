@@ -59,8 +59,8 @@ About the input parameters
 ---------------------------------------------------------------------------
 popsize: This variable stores the population size (a multiple of 4)
 ngen: Number of generations
-nobj: Number of objectives
-ncon: Number of constraints
+n_objectives: Number of objectives
+n_constraints: Number of constraints
 nreal: Number of real variables
 min_realvar[i]: minimum value of i^{th} real variable
 max_realvar[i]: maximum value of i^{th} real variable

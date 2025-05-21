@@ -54,8 +54,8 @@ extern int gene_length;
 extern int n_routes;
 extern int nreal;
 extern int nbin;
-extern int nobj;
-extern int ncon;
+extern int n_objectives;
+extern int n_constraints;
 extern int popsize;
 extern double pcross_real;
 extern double pcross_bin;
@@ -103,25 +103,33 @@ void ers(individual *ind);
 int readInputFile(char* filePath, problem_instance *pi);
 
 /* Functions from crowddist.c */
-void assign_crowding_distance_list (population *pop, list *lst, int front_size);
-void assign_crowding_distance_indices (population *pop, int c1, int c2);
-void assign_crowding_distance (population *pop, int *dist, int **obj_array, int front_size);
+void assign_crowding_distance_list(population *pop, list *lst, int front_size);
+void assign_crowding_distance_indices(population *pop, int c1, int c2);
+void assign_crowding_distance(population *pop, int *dist, int **obj_array, int front_size);
 
 /* Functions from decode.c */
-void decode_pop (population *pop);
-void decode_ind (individual *ind);
+void decode_pop(population *pop);
+void decode_ind(individual *ind);
 
 void onthefly_display (population *pop, FILE *gp, int ii);
 
 int check_dominance (individual *a, individual *b);
 
 /* Functions from eval.c */
-void evaluate_pop (population *pop, problem_instance *pi);
-void evaluate_ind (individual *ind, problem_instance *pi);
+void evaluate_pop(population *pop, problem_instance *pi);
+void evaluate_ind(individual *ind, problem_instance *pi);
+void objective_function_one(individual *ind, problem_instance *pi);
+void objective_function_two(individual *ind, problem_instance *pi);
+void objective_function_three(individual *ind, problem_instance *pi);
+void contraint_one(individual *ind, problem_instance *pi);
+void contraint_two(individual *ind, problem_instance *pi);
+void contraint_three(individual *ind, problem_instance *pi);
+void contraint_four(individual *ind, problem_instance *pi);
 
 void fill_nondominated_sort (population *mixed_pop, population *new_pop);
 void crowding_fill (population *mixed_pop, population *new_pop, int count, int front_size, list *cur);
 
+/* Functions from initialize.c */
 void initialize_pop(population *pop, problem_instance *pi);
 void initialize_ind(individual *ind, problem_instance *pi);
 

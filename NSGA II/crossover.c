@@ -18,7 +18,7 @@ void rbx(individual *parent1, individual *parent2, individual *child1, individua
 	int used1[1000] = {0};
 	int used2[1000] = {0};
 	int i, j, route, count;
-	route = rnd(1,n_routes);
+	route = rnd(1, n_routes);
 
 	/* RBX for first child */
 	count = 1;

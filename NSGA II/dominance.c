@@ -52,7 +52,7 @@ int check_dominance (individual *a, individual *b)
             }
             else
             {
-                for (i=0; i<nobj; i++)
+                for (i=0; i<n_objectives; i++)
                 {
                     if (a->obj[i] < b->obj[i])
                     {
