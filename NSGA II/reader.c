@@ -304,10 +304,10 @@ void read_t(FILE *f, problem_instance *pi) {
 
 		to = strtok(NULL, " ");
 		distance = strtok(NULL, " ");
-		idFrom = getNodeId(atoi(from), *pi);
-		idTo = getNodeId(atoi(to), *pi);
+		idFrom = atoi(from);
+		idTo = atoi(to);
 
-		if (debug) printf("from: %s, to:%s , param_t: %s\n", from, to, distance);
+		if (debug) printf("from: %d, to:%d , param_t: %f\n", idFrom, idTo, atof(distance));
 		pi->param_t[idFrom][idTo] = atof(distance);
 	}
 }
@@ -382,7 +382,7 @@ int readInputFile(char* filePath, problem_instance *pi) {
 	gene_length = pi->nPOI + pi->set_M;
 	n_routes = pi->set_M;
 	n_objectives = 3;
-	n_constraints = 4;
+	n_constraints = 3;
 
 	if (debug) printProblemInstance(pi);
 	if (debug) getchar();

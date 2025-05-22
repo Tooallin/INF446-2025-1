@@ -3,6 +3,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <math.h>
+# include <string.h>
 
 # include "global.h"
 # include "rand.h"
@@ -97,5 +98,83 @@ void ers(individual *ind) {
 	temp = ind->gene[poi1];
 	ind->gene[poi1] = ind->gene[poi2];
 	ind->gene[poi2] = temp;
+	return;
+}
+
+/* Routine for insert mutation */
+void insert_mutation(individual *ind) {
+	int start1, end1;
+	int start2, end2;
+	int route = rnd(1, n_routes);
+	int pos;
+	int choice;
+	int i, j;
+	int *copy;
+
+	find_route_bounds(ind, route, &start1, &end1);
+	if (start1 == -1 || end1 == -1) {
+		return;
+	}
+	pos = rnd(start1, end1);
+
+	find_last_route_bounds(ind, &start2, &end2);
+	if (start2 == -1 || end2 == -1) {
+		return;
+	}
+	choice = rnd(start2, end2);
+
+	i = 0;
+	j = 0;
+	copy = (int *)malloc(gene_length * sizeof(int));
+	memcpy(copy, ind->gene, gene_length * sizeof(int));
+	while (j < gene_length && i < gene_length) {
+		if (i == pos) {
+			copy[j] = ind->gene[choice];
+			j++;
+		} else if (i == choice) {
+			i++;
+		} else {
+			copy[j] = ind->gene[i];
+			i++;
+			j++;
+		}
+	}
+	memcpy(ind->gene, copy, gene_length * sizeof(int));
+	free(copy);
+	return;
+}
+
+/* Routine for remove mutation */
+void remove_mutation(individual *ind) {
+	int start, end;
+	int route = rnd(1, n_routes);
+	int choice;
+	int i, j;
+	int *copy;
+
+	find_route_bounds(ind, route, &start, &end);
+	if (start == end || start == -1 || end == -1) {
+		return;
+	}
+	choice = rnd(start, end);
+
+	i = 0;
+	j = 0;
+	copy = (int *)malloc(gene_length * sizeof(int));
+	memcpy(copy, ind->gene, gene_length * sizeof(int));
+	while (j < gene_length && i < gene_length) {
+		if (j == choice) {
+			i++;
+		} else if (j == gene_length - 1) {
+			copy[j] = ind->gene[choice];
+			j++;
+		} else {
+			copy[j] = ind->gene[i];
+			i++;
+			j++;
+		}
+	}
+	memcpy(ind->gene, copy, gene_length * sizeof(int));
+	free(copy);
 	return;
 }

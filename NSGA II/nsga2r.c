@@ -150,9 +150,17 @@ int main (int argc, char **argv) {
 	initialize_pop(parent_pop, pi);
 	printf("\n Initialization done, now performing first generation\n");
 	decode_pop(parent_pop);
+	printf("\n Decode done\n");
+	getchar();
 	evaluate_pop(parent_pop, pi);
+	printf("\n Evaluate done\n");
+	getchar();
 	assign_rank_and_crowding_distance(parent_pop);
+	printf("\n Rank and Crowding distance done\n");
+	getchar();
 	report_pop(parent_pop, fpt1);
+	printf("\n Report done\n");
+	getchar();
 	fprintf(fpt4,"# gen = 1\n");
 	report_pop(parent_pop,fpt4);
 	printf("\n gen = 1");

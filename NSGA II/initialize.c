@@ -10,7 +10,7 @@
 /* Function to initialize a population randomly */
 void initialize_pop(population *pop, problem_instance *pi) {
 	int i;
-	for (i=0; i<popsize; i++) {
+	for (i = 0; i < popsize; i++) {
 		initialize_ind(&(pop->ind[i]), pi);
 	}
 	return;
@@ -18,7 +18,11 @@ void initialize_pop(population *pop, problem_instance *pi) {
 
 /* Function to initialize an individual randomly */
 void initialize_ind(individual *ind, problem_instance *pi) {
+	int i;
 	random_sequence(pi->nPOI, ind->gene);
 	split_sequence(pi->nPOI, pi->set_M, ind->gene);
+	for (i = 0; i < n_constraints; i++) {
+		ind->constr[i] = 0.0;
+	}
 	return;
 }

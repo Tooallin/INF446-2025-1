@@ -102,3 +102,8 @@ void rbx(individual *parent1, individual *parent2, individual *child1, individua
 
 	return;
 }
+
+/* Routine for order crossover */
+void ox(individual *parent1, individual *parent2, individual *child1, individual *child2) {
+	return;
+}

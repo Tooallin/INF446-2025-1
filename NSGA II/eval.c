@@ -38,9 +38,6 @@ void evaluate_ind(individual *ind, problem_instance *pi) {
 	/* Evaluate constrain 3 */
 	contraint_three(ind, pi);
 
-	/* Evaluate constrain 4 */
-	contraint_four(ind, pi);
-
 	/* Evaluate constrains */
 	ind->constr_violation = 0.0;
 	for (i = 0; i < n_constraints; i++) {
@@ -139,8 +136,9 @@ void contraint_one(individual *ind, problem_instance *pi) {
 /* Routine to evaluate constraint 2 */
 void contraint_two(individual *ind, problem_instance *pi) {
 	int i, j;
-	int temp;
+	double temp;
 	ind->constr[1] = 0;
+	j = 0;
 	for (i = 1; i < n_routes; i++) {
 		temp = 0;
 		temp += pi->param_t[pi->param_o.id][ind->gene[j]] + pi->set_POI[ind->gene[j]-1].TT;
@@ -152,7 +150,7 @@ void contraint_two(individual *ind, problem_instance *pi) {
 		temp += pi->param_t[ind->gene[j-1]][pi->param_s.id];
 		temp -= pi->param_TM;
 		if (temp > 0) {
-			ind->constr[1] -= temp;
+			ind->constr[1] = -temp;
 		}
 		j++;
 	}
@@ -164,6 +162,7 @@ void contraint_three(individual *ind, problem_instance *pi) {
 	int i, j;
 	int temp;
 	ind->constr[2] = 0;
+	j = 0;
 	for (i = 1; i < n_routes; i++) {
 		temp = 0;
 		temp += pi->param_t[pi->param_o.id][ind->gene[j]];
@@ -192,11 +191,5 @@ void contraint_three(individual *ind, problem_instance *pi) {
 		}
 		j++;
 	}
-	return;
-}
-
-/* Routine to evaluate constraint 4 */
-void contraint_four(individual *ind, problem_instance *pi) {
-	ind->constr[3] = 0;
 	return;
 }
