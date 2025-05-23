@@ -1,0 +1,47 @@
+{
+  "$schema": "https://cdn.statically.io/gh/nguyenngoclongdev/cdn/main/schema/v10/terminal-keeper.json",
+  "theme": "neon",
+  "active": "default",
+  "activateOnStartup": true,
+  "keepExistingTerminals": true,
+  "sessions": {
+    "default": [
+      {
+        "name": "code",
+        "autoExecuteCommands": true,
+        "icon": "keyboard",
+        "color": "terminal.ansiGreen",
+        "commands": [
+          "clear"
+        ]
+      },
+      {
+        "name": "github",
+        "autoExecuteCommands": true,
+        "icon": "github",
+        "color": "terminal.ansiBrightMagenta",
+        "commands": [
+          "clear"
+        ]
+      },
+      {
+        "name": "make",
+        "autoExecuteCommands": true,
+        "icon": "tools",
+        "color": "terminal.ansiBrightRed",
+        "commands": [
+          "clear"
+        ]
+      },
+      {
+        "name": "python",
+        "autoExecuteCommands": true,
+        "icon": "graph",
+        "color": "terminal.ansiBrightBlue",
+        "commands": [
+          "clear"
+        ]
+      }
+    ]
+  }
+}

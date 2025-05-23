@@ -1,0 +1,111 @@
+:::::::::::::::::::::::::: Descripcion de la Instancia ::::::::::::::::::::::::::
+
+Nodo inicial         : 0 
+Nodo final           : 15 
+Tmax                 : 468 
+Numero de nodos      : 16 
+Numero de rutas      : 2 
+Numero de categorias : 3 
+ - Cuota de la categoria 1 : 78 
+ - Cuota de la categoria 2 : 120 
+ - Cuota de la categoria 3 : 30 
+Funcion Objetivo : 1
+Gurobi 12.0.1:   lim:time = 300
+Gurobi 12.0.1: optimal solution; objective -230
+262 simplex iterations
+1 branching node
+Funcion Objetivo : 2
+Gurobi 12.0.1:   lim:time = 300
+Gurobi 12.0.1: optimal solution; objective -5
+0 simplex iterations
+Funcion Objetivo : 3
+Gurobi 12.0.1:   lim:time = 300
+Gurobi 12.0.1: optimal solution; objective 0
+91 simplex iterations
+1 branching node
+==> Ejecucion : 1
+Gurobi 12.0.1:   lim:time = 300
+Gurobi 12.0.1: optimal solution; objective 0.09178187404
+795 simplex iterations
+18 branching nodes
+absmipgap=8.32667e-17, relmipgap=0
+==> Ejecucion : 2
+Gurobi 12.0.1:   lim:time = 300
+Gurobi 12.0.1: optimal solution; objective 0.09984639017
+1753 simplex iterations
+112 branching nodes
+absmipgap=8.32667e-17, relmipgap=0
+==> Ejecucion : 3
+Gurobi 12.0.1:   lim:time = 300
+Gurobi 12.0.1: optimal solution; objective 0.09642857143
+1299 simplex iterations
+47 branching nodes
+absmipgap=5.55112e-17, relmipgap=0
+==> Ejecucion : 4
+Gurobi 12.0.1:   lim:time = 300
+Gurobi 12.0.1: optimal solution; objective 0.09443513476
+3626 simplex iterations
+154 branching nodes
+absmipgap=1.38778e-16, relmipgap=0
+==> Ejecucion : 5
+Gurobi 12.0.1:   lim:time = 300
+Gurobi 12.0.1: optimal solution; objective 0.09826839827
+445 simplex iterations
+1 branching node
+==> Ejecucion : 6
+Gurobi 12.0.1:   lim:time = 300
+Gurobi 12.0.1: optimal solution; objective 0.08993506494
+957 simplex iterations
+30 branching nodes
+absmipgap=1.11022e-16, relmipgap=0
+==> Ejecucion : 7
+Gurobi 12.0.1:   lim:time = 300
+Gurobi 12.0.1: optimal solution; objective 0.09708839548
+2753 simplex iterations
+116 branching nodes
+absmipgap=1.94289e-16, relmipgap=0
+==> Ejecucion : 8
+Gurobi 12.0.1:   lim:time = 300
+Gurobi 12.0.1: optimal solution; objective 0.09177489177
+1521 simplex iterations
+45 branching nodes
+absmipgap=1.11022e-16, relmipgap=0
+==> Ejecucion : 9
+Gurobi 12.0.1:   lim:time = 300
+Gurobi 12.0.1: optimal solution; objective 5.672043011e-06
+439 simplex iterations
+1 branching node
+absmipgap=3.99283e-17, relmipgap=0
+==> Ejecucion : 10
+Gurobi 12.0.1:   lim:time = 300
+Gurobi 12.0.1: optimal solution; objective 6.207233626e-06
+112 simplex iterations
+1 branching node
+absmipgap=5.94837e-17, relmipgap=0
+==> Ejecucion : 11
+Gurobi 12.0.1:   lim:time = 300
+Gurobi 12.0.1: optimal solution; objective 4.512987013e-06
+147 simplex iterations
+1 branching node
+absmipgap=6.62583e-17, relmipgap=0
+
+
+:   MVF   PVF TCPU1    f1    f2   f3    :=
+1   -230    1    2    -230   -4   30
+2     -5    1    0     -15   -5    5
+3      0   31    0       0    0    0
+;
+
+:      FN1        FN2         FN3       F1    F2   F3 TCPU2    :=
+1    0.891775   1          0.83871     -205   -5    5    0
+2    0.891775   1          0.83871     -205   -5    5    1
+3    0.87013    0.833333   1           -200   -4    0    0
+4    0.891775   1          0.83871     -205   -5    5    0
+5    0.87013    0.833333   1           -200   -4    0    1
+6    0.87013    0.833333   1           -200   -4    0    0
+7    0.891775   1          0.83871     -205   -5    5    0
+8    0.87013    0.833333   1           -200   -4    0    0
+9    1          0.833333   0.0322581   -230   -4   30    1
+10   0.242424   1          0.516129     -55   -5   15    0
+11   0.264069   0.833333   1            -60   -4    0    0
+;
