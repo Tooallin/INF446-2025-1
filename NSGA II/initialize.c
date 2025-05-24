@@ -20,7 +20,7 @@ void initialize_pop(population *pop, problem_instance *pi) {
 void initialize_ind(individual *ind, problem_instance *pi) {
 	int i;
 	random_sequence(pi->nPOI, ind->gene);
-	split_sequence(pi->nPOI, pi->set_M, ind->gene);
+	split_sequence_by_duration(pi, ind->gene);
 	for (i = 0; i < n_constraints; i++) {
 		ind->constr[i] = 0.0;
 	}

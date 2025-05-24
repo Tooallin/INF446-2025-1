@@ -6,6 +6,7 @@
 
 # include "global.h"
 # include "rand.h"
+# include <string.h>
 
 double seed;
 double oldrand[55];
@@ -96,6 +97,57 @@ void split_sequence(int N, int M, int *sequence) {
 			sequence[write_idx--] = -1;
 		}
 	}
+}
+
+void split_sequence_by_duration(problem_instance *pi, int *sequence) {
+	int *temp = (int *)malloc(pi->nPOI * sizeof(int));
+	int *used = (int *)calloc(pi->nPOI, sizeof(int));
+	int write_idx = 0;
+	int route_count = 0;
+	int origin = pi->param_o.id;
+	int destination = pi->param_s.id;
+	int i;
+	int poi;
+	double travel_time;
+	double service_time;
+	double return_time;
+	double projected_time;
+
+	memcpy(temp, sequence, pi->nPOI * sizeof(int));
+
+	while (route_count < pi->set_M) {
+		double total_time = 0.0;
+		int last_node = origin;
+
+		for (i = 0; i < pi->nPOI; i++) {
+			if (used[i]) continue;
+
+			poi = temp[i];
+			travel_time = pi->param_t[last_node][poi];
+			service_time = pi->set_POI[poi - 1].TT;
+			return_time = pi->param_t[poi][destination];
+			projected_time = total_time + travel_time + service_time + return_time;
+
+			if (projected_time <= pi->param_TM) {
+				sequence[write_idx++] = poi;
+				used[i] = 1;
+				total_time += travel_time + service_time;
+				last_node = poi;
+			}
+		}
+
+		sequence[write_idx++] = -1;
+		route_count++;
+	}
+
+	for (i = 0; i < pi->nPOI; i++) {
+		if (!used[i]) {
+			sequence[write_idx++] = temp[i];
+		}
+	}
+
+	free(temp);
+	free(used);
 }
 
 /* Create a random sequence of POI's */

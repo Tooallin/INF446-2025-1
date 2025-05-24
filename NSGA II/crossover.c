@@ -8,102 +8,55 @@
 # include "rand.h"
 
 /* Function to cross two individuals */
-void crossover(individual *parent1, individual *parent2, individual *child1, individual *child2) {
-	rbx(parent1, parent2, child1, child2);
+void crossover(individual *parent1, individual *parent2, individual *child1, individual *child2, problem_instance *pi) {
+	rbx_crossover(parent1, parent2, child1);
+	rbx_crossover(parent2, parent1, child2);
+	/*rbx(parent1, parent2, child1, pi); rbx(parent2, parent1, child2, pi);*/
 	return;
 }
 
-/* Routine for route based crossover */
-void rbx(individual *parent1, individual *parent2, individual *child1, individual *child2) {
-	int used1[1000] = {0};
-	int used2[1000] = {0};
-	int i, j, route, count;
-	route = rnd(1, n_routes);
+void rbx_crossover(individual *parent1, individual *parent2, individual *child) {
+	int *used = (int *)calloc(gene_length, sizeof(int));
+	int *gene = child->gene;
+	int selected_route;
+	int start, end;
+	int max_attempts;
+	int attempts;
+	int i, j, k;
+	max_attempts = 10;
+	attempts = 0;
 
-	/* RBX for first child */
-	count = 1;
-	j = 0;
-	for (i = 0; i < gene_length; i++) {
-		if (parent1->gene[i] == -1) {
-			count++;
-			continue;
-		}
-		if (count == route) {
-			used1[parent1->gene[i]] = 1;
-			child1->gene[j++] = parent1->gene[i];
-		} 
+	do {
+		selected_route = rnd(1, n_routes);
+		find_route_bounds(parent1, selected_route, &start, &end);
+	} while (start == -1 && end == -1 && attempts < max_attempts);
+
+	i = 0;
+	for (j = start; j <= end; j++) {
+		gene[i++] = parent1->gene[j];
+		used[parent1->gene[j]-1] = 1;
 	}
-	child1->gene[j++] = -1;
-	count = 1;
-	for (i = 0; i < gene_length; i++) {
-		if (parent2->gene[i] == -1) {
-			if (count != route) {
-				child1->gene[j++] = -1;
-			}
-			count++;
-			continue;
+	gene[i++] = -1;
+
+	for (j = 1; j <= n_routes; j++) {
+		if (j == selected_route) continue;
+		find_route_bounds(parent2, j, &start, &end);
+		for (k = start; k <= end; k++) {
+			if (start == -1) break;
+			if (used[parent2->gene[k]-1]) continue;
+			gene[i++] = parent2->gene[k];
+			used[parent2->gene[k]-1] = 1;
 		}
-		if (count != route && used1[parent2->gene[i]] != 1) {
-			used1[parent2->gene[i]] = 1;
-			child1->gene[j++] = parent2->gene[i];
-		}
+		gene[i++] = -1;
 	}
-	count = 1;
-	for (i = 0; i < gene_length; i++) {
-		if (parent2->gene[i] == -1) {
-			count++;
-			continue;
-		}
-		if (count == route && used1[parent2->gene[i]] != 1) {
-			used1[parent2->gene[i]] = 1;
-			child1->gene[j++] = parent2->gene[i];
+
+	for (j = 0; j < gene_length; j++) {
+		if (i == gene_length) break;
+		if (!used[j]) {
+			gene[i++] = j+1;
 		}
 	}
 
-	/* RBX for second child */
-	count = 1;
-	j = 0;
-	for (i = 0; i < gene_length; i++) {
-		if (parent2->gene[i] == -1) {
-			count++;
-			continue;
-		}
-		if (count == route) {
-			used2[parent2->gene[i]] = 1;
-			child2->gene[j++] = parent2->gene[i];
-		} 
-	}
-	child2->gene[j++] = -1;
-	count = 1;
-	for (i = 0; i < gene_length; i++) {
-		if (parent1->gene[i] == -1) {
-			if (count != route) {
-				child2->gene[j++] = -1;
-			}
-			count++;
-			continue;
-		}
-		if (count != route && used2[parent1->gene[i]] != 1) {
-			used2[parent1->gene[i]] = 1;
-			child2->gene[j++] = parent1->gene[i];
-		}
-	}
-	count = 1;
-	for (i = 0; i < gene_length; i++) {
-		if (parent1->gene[i] == -1) {
-			count++;
-			continue;
-		}
-		if (count == route && used2[parent1->gene[i]] != 1) {
-			used2[parent1->gene[i]] = 1;
-			child2->gene[j++] = parent1->gene[i];
-		}
-	}
-
-	return;
-}
-
-/* Routine for order crossover */
-void ox(individual *parent1, individual *parent2, individual *child1, individual *child2) {
+	free(used);
 	return;
 }

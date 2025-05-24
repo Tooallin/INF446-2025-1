@@ -32,15 +32,6 @@
         "commands": [
           "clear"
         ]
-      },
-      {
-        "name": "python",
-        "autoExecuteCommands": true,
-        "icon": "graph",
-        "color": "terminal.ansiBrightBlue",
-        "commands": [
-          "clear"
-        ]
       }
     ]
   }

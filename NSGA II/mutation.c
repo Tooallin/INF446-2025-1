@@ -20,161 +20,148 @@ void mutation_pop(population *pop) {
 /* Function to perform mutation of an individual */
 void mutation_ind(individual *ind) {
 	int choice;
-	choice = rnd(1,2);
+	choice = rnd(1, 4);
 	if (choice == 1) {
-		ars(ind);
+		ars_mutation(ind);
+	} else if (choice == 2) {
+		ers_mutation(ind);
+	} else if (choice == 3) {
+		insert_mutation(ind);
 	} else {
-		ers(ind);
+		remove_mutation(ind);
 	}
 	return;
 }
 
 /* Routine for intra route swap mutation */
-void ars(individual *ind) {
+void ars_mutation(individual *ind) {
 	int start, end;
 	int poi1, poi2, temp;
-	int count, route;
+	int route;
+	
 	route = rnd(1, n_routes);
-	start = 0; count = 1;
-	while (count < route) {
-		if (ind->gene[start] == -1) {
-			count++;
-		}
-		start++;
-	}
-	end = 0; count = 1;
-	while (count < route + 1) {
-		if (ind->gene[end] == -1) {
-			count++;
-		}
-		end++;
-	}
-	poi1 = rnd(start, end - 1);
-	poi2 = rnd(start, end - 1);
+
+	find_route_bounds(ind, route, &start, &end);
+	if (start == -1 || end == -1 || end - start < 1) return;
+
+	do {
+		poi1 = rnd(start, end);
+		poi2 = rnd(start, end);
+	} while (poi1 == poi2);
+
 	temp = ind->gene[poi1];
 	ind->gene[poi1] = ind->gene[poi2];
 	ind->gene[poi2] = temp;
+
 	return;
 }
 
 /* Routine for inter route swap mutation */
-void ers(individual *ind) {
-	int start1, end1;
-	int start2, end2;
+void ers_mutation(individual *ind) {
+	int start1, end1, start2, end2;
 	int poi1, poi2, temp;
-	int count, route1, route2;
-	route1 = rnd(1, n_routes);
-	start1 = 0; count = 1;
-	while (count < route1) {
-		if (ind->gene[start1] == -1) {
-			count++;
-		}
-		start1++;
-	}
-	end1 = 0; count = 1;
-	while (count < route1 + 1) {
-		if (ind->gene[end1] == -1) {
-			count++;
-		}
-		end1++;
-	}
-	route2 = rnd(1, n_routes);
-	start2 = 0; count = 1;
-	while (count < route2) {
-		if (ind->gene[start2] == -1) {
-			count++;
-		}
-		start2++;
-	}
-	end2 = 0; count = 1;
-	while (count < route2 + 1) {
-		if (ind->gene[end2] == -1) {
-			count++;
-		}
-		end2++;
-	}
-	poi1 = rnd(start1, end1 - 1);
-	poi2 = rnd(start2, end2 - 1);
+	int route1, route2;
+	int max_attempts;
+	int attempts;
+	max_attempts = 10;
+	attempts = 0;
+
+	do {
+		route1 = rnd(1, n_routes);
+		route2 = rnd(1, n_routes);
+		attempts++;
+	} while (route1 == route2 && attempts < max_attempts);
+
+	if (route1 == route2) return;
+
+	find_route_bounds(ind, route1, &start1, &end1);
+	find_route_bounds(ind, route2, &start2, &end2);
+
+	if (start1 == -1 || end1 == -1 || end1 - start1 < 0) return;
+	if (start2 == -1 || end2 == -1 || end2 - start2 < 0) return;
+
+	poi1 = rnd(start1, end1);
+	poi2 = rnd(start2, end2);
+
 	temp = ind->gene[poi1];
 	ind->gene[poi1] = ind->gene[poi2];
 	ind->gene[poi2] = temp;
+
 	return;
 }
 
 /* Routine for insert mutation */
 void insert_mutation(individual *ind) {
-	int start1, end1;
-	int start2, end2;
-	int route = rnd(1, n_routes);
-	int pos;
-	int choice;
-	int i, j;
-	int *copy;
+	int start_route, end_route, start_unvisited, end_unvisited;
+	int insert_pos, selected_pos, poi_to_insert;
+	int i, k;
+	int *new_gene;
+	int route;
 
-	find_route_bounds(ind, route, &start1, &end1);
-	if (start1 == -1 || end1 == -1) {
-		return;
-	}
-	pos = rnd(start1, end1);
+	find_last_route_bounds(ind, &start_unvisited, &end_unvisited);
+	if (start_unvisited > end_unvisited) return;
 
-	find_last_route_bounds(ind, &start2, &end2);
-	if (start2 == -1 || end2 == -1) {
-		return;
-	}
-	choice = rnd(start2, end2);
+	selected_pos = rnd(start_unvisited, end_unvisited);
+	poi_to_insert = ind->gene[selected_pos];
 
-	i = 0;
-	j = 0;
-	copy = (int *)malloc(gene_length * sizeof(int));
-	memcpy(copy, ind->gene, gene_length * sizeof(int));
-	while (j < gene_length && i < gene_length) {
-		if (i == pos) {
-			copy[j] = ind->gene[choice];
-			j++;
-		} else if (i == choice) {
-			i++;
-		} else {
-			copy[j] = ind->gene[i];
-			i++;
-			j++;
+	route = rnd(1, n_routes);
+	find_route_bounds(ind, route, &start_route, &end_route);
+	if (start_route == -1 || end_route == -1) return;
+
+	insert_pos = rnd(start_route, end_route + 1);
+
+	new_gene = (int *)malloc(gene_length * sizeof(int));
+	k = 0;
+
+	for (i = 0; i < gene_length; i++) {
+		if (i == insert_pos) {
+			new_gene[k++] = poi_to_insert;
+		}
+		if (i != selected_pos) {
+			new_gene[k++] = ind->gene[i];
 		}
 	}
-	memcpy(ind->gene, copy, gene_length * sizeof(int));
-	free(copy);
-	return;
+
+	while (k < gene_length) {
+		new_gene[k++] = -1;
+	}
+
+	memcpy(ind->gene, new_gene, gene_length * sizeof(int));
+	free(new_gene);
 }
 
 /* Routine for remove mutation */
 void remove_mutation(individual *ind) {
-	int start, end;
+	int start, end, start_unvisited, end_unvisited;
 	int route = rnd(1, n_routes);
-	int choice;
-	int i, j;
-	int *copy;
+	int poi_to_remove, remove_index;
+	int i, k;
+	int *new_gene;
 
 	find_route_bounds(ind, route, &start, &end);
-	if (start == end || start == -1 || end == -1) {
-		return;
-	}
-	choice = rnd(start, end);
+	if (start == -1 || end == -1 || end - start < 0) return;
 
-	i = 0;
-	j = 0;
-	copy = (int *)malloc(gene_length * sizeof(int));
-	memcpy(copy, ind->gene, gene_length * sizeof(int));
-	while (j < gene_length && i < gene_length) {
-		if (j == choice) {
-			i++;
-		} else if (j == gene_length - 1) {
-			copy[j] = ind->gene[choice];
-			j++;
-		} else {
-			copy[j] = ind->gene[i];
-			i++;
-			j++;
+	remove_index = rnd(start, end);
+	poi_to_remove = ind->gene[remove_index];
+
+	find_last_route_bounds(ind, &start_unvisited, &end_unvisited);
+	if (start_unvisited == -1 || end_unvisited == -1) return;
+
+	new_gene = (int *)malloc(gene_length * sizeof(int));
+	k = 0;
+
+	for (i = 0; i < gene_length; i++) {
+		if (i != remove_index) {
+			new_gene[k++] = ind->gene[i];
 		}
 	}
-	memcpy(ind->gene, copy, gene_length * sizeof(int));
-	free(copy);
-	return;
+
+	new_gene[k++] = poi_to_remove;
+
+	while (k < gene_length) {
+		new_gene[k++] = -1;
+	}
+
+	memcpy(ind->gene, new_gene, gene_length * sizeof(int));
+	free(new_gene);
 }

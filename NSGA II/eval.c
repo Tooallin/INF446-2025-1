@@ -66,21 +66,41 @@ void objective_function_one(individual *ind, problem_instance *pi) {
 
 /* Routine to evaluate objective function 2 */
 void objective_function_two(individual *ind, problem_instance *pi) {
-	int i, j, k;
-	int temp;
-	ind->obj[1] = 0;
-	for (i = 0; i < pi->set_Z; i++) {
-		k = 0;
-		for (j = 1; j < n_routes; j++) {
-			temp = 0;
-			while (ind->gene[k] != -1) {
-				if (pi->set_POI[ind->gene[k]-1].e[i] == 1) temp = 1;
-				k++;
+	int i, j, z;
+	int **categoria_visitada;
+	int total = 0;
+
+	categoria_visitada = (int **)malloc(n_routes * sizeof(int *));
+	for (i = 0; i < n_routes; i++) {
+		categoria_visitada[i] = (int *)calloc(pi->set_Z, sizeof(int));
+	}
+
+	j = 0;
+	for (i = 0; i < n_routes; i++) {
+		while (j < gene_length && ind->gene[j] != -1) {
+			int id_poi = ind->gene[j] - 1;
+			for (z = 0; z < pi->set_Z; z++) {
+				if (pi->set_POI[id_poi].e[z] == 1) {
+					categoria_visitada[i][z] = 1;
+				}
 			}
-			ind->obj[1] -= temp;
-			k++;
+			j++;
+		}
+		j++;
+	}
+
+	for (i = 0; i < n_routes; i++) {
+		for (z = 0; z < pi->set_Z; z++) {
+			total += categoria_visitada[i][z];
 		}
 	}
+
+	ind->obj[1] = -total;
+
+	for (i = 0; i < n_routes; i++) {
+		free(categoria_visitada[i]);
+	}
+	free(categoria_visitada);
 	return;
 }
 
@@ -137,21 +157,39 @@ void contraint_one(individual *ind, problem_instance *pi) {
 void contraint_two(individual *ind, problem_instance *pi) {
 	int i, j;
 	double temp;
-	ind->constr[1] = 0;
+	int poi_actual, poi_anterior;
+
+	ind->constr[1] = 0.0;
 	j = 0;
+
 	for (i = 1; i < n_routes; i++) {
-		temp = 0;
-		temp += pi->param_t[pi->param_o.id][ind->gene[j]] + pi->set_POI[ind->gene[j]-1].TT;
+		temp = 0.0;
+
+		if (ind->gene[j] == -1) {
+			j++;
+			continue;
+		}
+
+		poi_actual = ind->gene[j];
+		temp += pi->param_t[pi->param_o.id][poi_actual] + pi->set_POI[poi_actual - 1].TT;
+		poi_anterior = poi_actual;
 		j++;
-		while (ind->gene[j] != -1) {
-			temp += pi->param_t[ind->gene[j-1]][ind->gene[j]] + pi->set_POI[ind->gene[j]-1].TT;
+
+		while (ind->gene[j] != -1 && j < gene_length) {
+			poi_actual = ind->gene[j];
+			temp += pi->param_t[poi_anterior][poi_actual] + pi->set_POI[poi_actual - 1].TT;
+			poi_anterior = poi_actual;
 			j++;
 		}
-		temp += pi->param_t[ind->gene[j-1]][pi->param_s.id];
-		temp -= pi->param_TM;
-		if (temp > 0) {
-			ind->constr[1] = -temp;
+
+		if (j > 0 && ind->gene[j - 1] != -1) {
+			temp += pi->param_t[poi_anterior][pi->param_s.id];
 		}
+
+		if (temp > pi->param_TM) {
+			ind->constr[1] += pi->param_TM - temp;
+		}
+
 		j++;
 	}
 	return;
@@ -160,35 +198,53 @@ void contraint_two(individual *ind, problem_instance *pi) {
 /* Routine to evaluate constraint 3 */
 void contraint_three(individual *ind, problem_instance *pi) {
 	int i, j;
-	int temp;
-	ind->constr[2] = 0;
+	double temp;
+	int poi_actual, poi_anterior;
+
+	ind->constr[2] = 0.0;
 	j = 0;
+
 	for (i = 1; i < n_routes; i++) {
-		temp = 0;
-		temp += pi->param_t[pi->param_o.id][ind->gene[j]];
-		if (temp < pi->set_POI[ind->gene[j]-1].OT) {
-			ind->constr[2] += temp - pi->set_POI[ind->gene[j]-1].OT;
+		if (ind->gene[j] == -1) {
+			j++;
+			continue;
 		}
-		if (temp > pi->set_POI[ind->gene[j]-1].CT) {
-			ind->constr[2] += pi->set_POI[ind->gene[j]-1].CT - temp;
+
+		poi_actual = ind->gene[j];
+		temp = pi->param_t[pi->param_o.id][poi_actual];
+
+		if (temp < pi->set_POI[poi_actual - 1].OT) {
+			ind->constr[2] += temp - pi->set_POI[poi_actual - 1].OT;
+			temp = pi->set_POI[poi_actual - 1].OT;
+		} else if (temp > pi->set_POI[poi_actual - 1].CT) {
+			ind->constr[2] += pi->set_POI[poi_actual - 1].CT - temp;
 		}
-		temp += pi->set_POI[ind->gene[j]-1].TT;
+		temp += pi->set_POI[poi_actual - 1].TT;
+		poi_anterior = poi_actual;
 		j++;
-		while (ind->gene[j] != -1) {
-			temp += pi->param_t[ind->gene[j-1]][ind->gene[j]];
-			if (temp < pi->set_POI[ind->gene[j]-1].OT) {
-				ind->constr[2] += temp - pi->set_POI[ind->gene[j]-1].OT;
+
+		while (ind->gene[j] != -1 && j < gene_length) {
+			poi_actual = ind->gene[j];
+			temp += pi->param_t[poi_anterior][poi_actual];
+
+			if (temp < pi->set_POI[poi_actual - 1].OT) {
+				ind->constr[2] += temp - pi->set_POI[poi_actual - 1].OT;
+				temp = pi->set_POI[poi_actual - 1].OT;
+			} else if (temp > pi->set_POI[poi_actual - 1].CT) {
+				ind->constr[2] += pi->set_POI[poi_actual - 1].CT - temp;
 			}
-			if (temp > pi->set_POI[ind->gene[j]-1].CT) {
-				ind->constr[2] += pi->set_POI[ind->gene[j]-1].CT - temp;
-			}
-			temp += pi->set_POI[ind->gene[j]-1].TT;
+			temp += pi->set_POI[poi_actual - 1].TT;
+			poi_anterior = poi_actual;
 			j++;
 		}
-		temp += pi->param_t[ind->gene[j-1]][pi->param_s.id];
-		if (temp > pi->param_s.CT) {
-			ind->constr[2] += pi->param_s.CT - temp;
+
+		if (j > 0 && ind->gene[j - 1] != -1) {
+			temp += pi->param_t[poi_anterior][pi->param_s.id];
+			if (temp > pi->param_s.CT) {
+				ind->constr[2] += pi->param_s.CT - temp;
+			}
 		}
+
 		j++;
 	}
 	return;

@@ -93,14 +93,17 @@ void find_route_bounds(individual *ind, int route, int *start_index, int *end_in
 void find_last_route_bounds(individual *ind, int *start_index, int *end_index);
 
 /* Functions from crossover.c */
-void crossover(individual *parent1, individual *parent2, individual *child1, individual *child2);
-void rbx(individual *parent1, individual *parent2, individual *child1, individual *child2);
+void crossover(individual *parent1, individual *parent2, individual *child1, individual *child2, problem_instance *pi);
+void rbx(individual *parent1, individual *parent2, individual *child, problem_instance *pi);
+void rbx_crossover(individual *parent1, individual *parent2, individual *child);
 
 /* Functions from mutation.c */
 void mutation_pop(population *pop);
 void mutation_ind(individual *ind);
-void ars(individual *ind);
-void ers(individual *ind);
+void ars_mutation(individual *ind);
+void ers_mutation(individual *ind);
+void insert_mutation(individual *ind);
+void remove_mutation(individual *ind);
 
 /* Functions from reader.c */
 int readInputFile(char* filePath, problem_instance *pi);
@@ -138,10 +141,9 @@ void initialize_ind(individual *ind, problem_instance *pi);
 void insert (list *node, int x);
 list* del (list *node);
 
+/* Functions from merge.c */
 void merge(population *pop1, population *pop2, population *pop3);
-void copy_ind (individual *ind1, individual *ind2);
-
-void test_problem (double *xreal, double *xbin, int **gene, double *obj, double *constr);
+void copy_ind(individual *ind1, individual *ind2);
 
 void assign_rank_and_crowding_distance (population *new_pop);
 
@@ -154,7 +156,8 @@ void q_sort_front_obj(population *pop, int objcount, int obj_array[], int left, 
 void quicksort_dist(population *pop, int *dist, int front_size);
 void q_sort_dist(population *pop, int *dist, int left, int right);
 
-void selection (population *old_pop, population *new_pop);
+/* Functions from tourselect.c */
+void selection(population *old_pop, population *new_pop, problem_instance *pi);
 individual* tournament (individual *ind1, individual *ind2);
 
 int isAPOI(int name, problem_instance pi);

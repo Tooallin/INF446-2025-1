@@ -151,16 +151,12 @@ int main (int argc, char **argv) {
 	printf("\n Initialization done, now performing first generation\n");
 	decode_pop(parent_pop);
 	printf("\n Decode done\n");
-	getchar();
 	evaluate_pop(parent_pop, pi);
 	printf("\n Evaluate done\n");
-	getchar();
 	assign_rank_and_crowding_distance(parent_pop);
 	printf("\n Rank and Crowding distance done\n");
-	getchar();
 	report_pop(parent_pop, fpt1);
 	printf("\n Report done\n");
-	getchar();
 	fprintf(fpt4,"# gen = 1\n");
 	report_pop(parent_pop,fpt4);
 	printf("\n gen = 1");
@@ -176,7 +172,7 @@ int main (int argc, char **argv) {
 	fflush(fpt5);
 	sleep(1);
 	for (i = 2; i <= ngen; i++) {
-		selection(parent_pop, child_pop);
+		selection(parent_pop, child_pop, pi);
 		mutation_pop(child_pop);
 		decode_pop(child_pop);
 		evaluate_pop(child_pop, pi);
