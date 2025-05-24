@@ -29,7 +29,10 @@ void rbx_crossover(individual *parent1, individual *parent2, individual *child) 
 	do {
 		selected_route = rnd(1, n_routes);
 		find_route_bounds(parent1, selected_route, &start, &end);
+		attempts++;
 	} while (start == -1 && end == -1 && attempts < max_attempts);
+
+	if (attempts == max_attempts) return;
 
 	i = 0;
 	for (j = start; j <= end; j++) {

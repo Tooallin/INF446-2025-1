@@ -20,25 +20,14 @@ void evaluate_pop(population *pop, problem_instance *pi) {
 void evaluate_ind(individual *ind, problem_instance *pi) {
 	int i;
 
-	/* Evaluate objective function 1 */
 	objective_function_one(ind, pi);
-
-	/* Evaluate objective function 2 */
 	objective_function_two(ind, pi);
-
-	/* Evaluate objective function 3 */
 	objective_function_three(ind, pi);
 
-	/* Evaluate constrain 1 */
-	contraint_one(ind, pi);
+	constraint_one(ind, pi);
+	constraint_two(ind, pi);
+	constraint_three(ind, pi);
 
-	/* Evaluate constrain 2 */
-	contraint_two(ind, pi);
-
-	/* Evaluate constrain 3 */
-	contraint_three(ind, pi);
-
-	/* Evaluate constrains */
 	ind->constr_violation = 0.0;
 	for (i = 0; i < n_constraints; i++) {
 		if (ind->constr[i] < 0.0) {
@@ -131,30 +120,36 @@ void objective_function_three(individual *ind, problem_instance *pi) {
 }
 
 /* Routine to evaluate constraint 1 */
-void contraint_one(individual *ind, problem_instance *pi) {
+void constraint_one(individual *ind, problem_instance *pi) {
 	int i, j, k;
-	int temp;
-	ind->constr[0] = 0;
+	int start, end;
+	double temp, visited;
+	ind->constr[0] = 0.0;
+
 	for (i = 0; i < pi->set_Z; i++) {
 		temp = 0;
-		k = 0;
-		for (j = 1; j < n_routes; j++) {
-			while (ind->gene[k] != -1) {
-				temp += pi->set_POI[ind->gene[k]-1].e[i];
-				k++;
+
+		for (j = 1; j <= n_routes; j++) {
+			find_route_bounds(ind, j, &start, &end);
+			if (start == -1 || end == -1) continue;
+			visited = 0;
+
+			for (k = start; k <= end; k++) {
+				if (pi->set_POI[ind->gene[k]-1].e[i] == 1) visited += 1;
 			}
-			k++;
+			temp += visited;
 		}
-		temp -= pi->param_E[i];
-		if (temp < 0) {
-			ind->constr[0] += temp;
+
+		if (temp > pi->param_E[i]) {
+			ind->constr[0] += pi->param_E[i] - temp;
 		}
 	}
+
 	return;
 }
 
 /* Routine to evaluate constraint 2 */
-void contraint_two(individual *ind, problem_instance *pi) {
+void constraint_two(individual *ind, problem_instance *pi) {
 	int i, j;
 	double temp;
 	int poi_actual, poi_anterior;
@@ -196,56 +191,49 @@ void contraint_two(individual *ind, problem_instance *pi) {
 }
 
 /* Routine to evaluate constraint 3 */
-void contraint_three(individual *ind, problem_instance *pi) {
+void constraint_three(individual *ind, problem_instance *pi) {
 	int i, j;
+	int start, end;
 	double temp;
-	int poi_actual, poi_anterior;
-
 	ind->constr[2] = 0.0;
-	j = 0;
 
-	for (i = 1; i < n_routes; i++) {
-		if (ind->gene[j] == -1) {
-			j++;
-			continue;
+	for (i = 1; i <= n_routes; i++) {
+		find_route_bounds(ind, i, &start, &end);
+		if (start == -1 || end == -1) continue;
+		temp = 0;
+
+		if (pi->param_t[pi->param_o.name][ind->gene[start]] < pi->set_POI[ind->gene[start]-1].OT) {
+			temp = pi->set_POI[ind->gene[start]-1].OT;
+		}
+		if (pi->param_t[pi->param_o.name][ind->gene[start]] > pi->set_POI[ind->gene[start]-1].CT) {
+			temp = pi->param_t[pi->param_o.name][ind->gene[start]];
 		}
 
-		poi_actual = ind->gene[j];
-		temp = pi->param_t[pi->param_o.id][poi_actual];
-
-		if (temp < pi->set_POI[poi_actual - 1].OT) {
-			ind->constr[2] += temp - pi->set_POI[poi_actual - 1].OT;
-			temp = pi->set_POI[poi_actual - 1].OT;
-		} else if (temp > pi->set_POI[poi_actual - 1].CT) {
-			ind->constr[2] += pi->set_POI[poi_actual - 1].CT - temp;
-		}
-		temp += pi->set_POI[poi_actual - 1].TT;
-		poi_anterior = poi_actual;
-		j++;
-
-		while (ind->gene[j] != -1 && j < gene_length) {
-			poi_actual = ind->gene[j];
-			temp += pi->param_t[poi_anterior][poi_actual];
-
-			if (temp < pi->set_POI[poi_actual - 1].OT) {
-				ind->constr[2] += temp - pi->set_POI[poi_actual - 1].OT;
-				temp = pi->set_POI[poi_actual - 1].OT;
-			} else if (temp > pi->set_POI[poi_actual - 1].CT) {
-				ind->constr[2] += pi->set_POI[poi_actual - 1].CT - temp;
+		for (j = start; j < end; j++) {
+			if (temp < pi->set_POI[ind->gene[start]-1].OT) {
+				ind->constr[2] += temp - pi->set_POI[ind->gene[start]-1].OT;
 			}
-			temp += pi->set_POI[poi_actual - 1].TT;
-			poi_anterior = poi_actual;
-			j++;
-		}
-
-		if (j > 0 && ind->gene[j - 1] != -1) {
-			temp += pi->param_t[poi_anterior][pi->param_s.id];
-			if (temp > pi->param_s.CT) {
-				ind->constr[2] += pi->param_s.CT - temp;
+			if (temp > pi->set_POI[ind->gene[start]-1].CT) {
+				ind->constr[2] += pi->set_POI[ind->gene[start]-1].CT - temp;
 			}
+			temp = temp + pi->set_POI[ind->gene[start]-1].TT + pi->param_t[ind->gene[start]][ind->gene[start+1]];
 		}
 
-		j++;
+		if (temp < pi->set_POI[ind->gene[end]-1].OT) {
+			ind->constr[2] += temp - pi->set_POI[ind->gene[end]-1].OT;
+		}
+		if (temp > pi->set_POI[ind->gene[end]-1].CT) {
+			ind->constr[2] += pi->set_POI[ind->gene[end]-1].CT - temp;
+		}
+		temp = temp + pi->set_POI[ind->gene[end]-1].TT + pi->param_t[ind->gene[end]][pi->param_s.name];
+
+		if (temp < pi->param_s.OT) {
+			ind->constr[2] += temp - pi->param_s.OT;
+		}
+		if (temp > pi->param_s.CT) {
+			ind->constr[2] += pi->param_s.CT - temp;
+		}
 	}
+
 	return;
 }

@@ -94,7 +94,6 @@ void find_last_route_bounds(individual *ind, int *start_index, int *end_index);
 
 /* Functions from crossover.c */
 void crossover(individual *parent1, individual *parent2, individual *child1, individual *child2, problem_instance *pi);
-void rbx(individual *parent1, individual *parent2, individual *child, problem_instance *pi);
 void rbx_crossover(individual *parent1, individual *parent2, individual *child);
 
 /* Functions from mutation.c */
@@ -127,9 +126,9 @@ void evaluate_ind(individual *ind, problem_instance *pi);
 void objective_function_one(individual *ind, problem_instance *pi);
 void objective_function_two(individual *ind, problem_instance *pi);
 void objective_function_three(individual *ind, problem_instance *pi);
-void contraint_one(individual *ind, problem_instance *pi);
-void contraint_two(individual *ind, problem_instance *pi);
-void contraint_three(individual *ind, problem_instance *pi);
+void constraint_one(individual *ind, problem_instance *pi);
+void constraint_two(individual *ind, problem_instance *pi);
+void constraint_three(individual *ind, problem_instance *pi);
 
 void fill_nondominated_sort (population *mixed_pop, population *new_pop);
 void crowding_fill (population *mixed_pop, population *new_pop, int count, int front_size, list *cur);
