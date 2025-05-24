@@ -10,8 +10,8 @@
 int isAPOI(int name, problem_instance pi) {
 	int i;
 	int count=0;
-	for (i=0; i<pi.nPOI; i++){
-		if(name == pi.set_POI[i].name)
+	for (i = 0; i < pi.nPOI; i++){
+		if (name == pi.set_POI[i].name)
 			return 1;
 		count++;
 	}
@@ -23,8 +23,8 @@ int isAPOI(int name, problem_instance pi) {
 
 int getNodeId(int name, problem_instance pi){
 	int i;
-	for (i=0; i<pi.nPOI; i++){
-		if(name == pi.set_POI[i].name)
+	for (i = 0; i < pi.nPOI; i++){
+		if (name == pi.set_POI[i].name)
 			return pi.set_POI[i].id;
 	}
 	if (name == pi.param_o.name) {

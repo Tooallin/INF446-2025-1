@@ -11,7 +11,6 @@
 void crossover(individual *parent1, individual *parent2, individual *child1, individual *child2, problem_instance *pi) {
 	rbx_crossover(parent1, parent2, child1);
 	rbx_crossover(parent2, parent1, child2);
-	/*rbx(parent1, parent2, child1, pi); rbx(parent2, parent1, child2, pi);*/
 	return;
 }
 

@@ -81,10 +81,11 @@ extern int obj3;
 extern int angle1;
 extern int angle2;
 
-void allocate_memory_pop (population *pop, int size);
-void allocate_memory_ind (individual *ind);
-void deallocate_memory_pop (population *pop, int size);
-void deallocate_memory_ind (individual *ind);
+/* Functions from auxiliary.c */
+void allocate_memory_pop(population *pop, int size);
+void allocate_memory_ind(individual *ind);
+void deallocate_memory_pop(population *pop, int size);
+void deallocate_memory_ind(individual *ind);
 
 /* Functions from auxiliary.c */
 double maximum(double a, double b);
@@ -116,9 +117,11 @@ void assign_crowding_distance(population *pop, int *dist, int **obj_array, int f
 void decode_pop(population *pop);
 void decode_ind(individual *ind);
 
-void onthefly_display (population *pop, FILE *gp, int ii);
+/* Functions from display.c */
+void onthefly_display(population *pop, FILE *gp, int ii);
 
-int check_dominance (individual *a, individual *b);
+/* Functions from dominance.c */
+int check_dominance(individual *a, individual *b);
 
 /* Functions from eval.c */
 void evaluate_pop(population *pop, problem_instance *pi);
@@ -130,26 +133,31 @@ void constraint_one(individual *ind, problem_instance *pi);
 void constraint_two(individual *ind, problem_instance *pi);
 void constraint_three(individual *ind, problem_instance *pi);
 
-void fill_nondominated_sort (population *mixed_pop, population *new_pop);
-void crowding_fill (population *mixed_pop, population *new_pop, int count, int front_size, list *cur);
+/* Functions from fillnds.c */
+void fill_nondominated_sort(population *mixed_pop, population *new_pop);
+void crowding_fill(population *mixed_pop, population *new_pop, int count, int front_size, list *cur);
 
 /* Functions from initialize.c */
 void initialize_pop(population *pop, problem_instance *pi);
 void initialize_ind(individual *ind, problem_instance *pi);
 
-void insert (list *node, int x);
-list* del (list *node);
+/* Functions from list.c */
+void insert(list *node, int x);
+list* del(list *node);
 
 /* Functions from merge.c */
 void merge(population *pop1, population *pop2, population *pop3);
 void copy_ind(individual *ind1, individual *ind2);
 
-void assign_rank_and_crowding_distance (population *new_pop);
+/* Functions from rank.c */
+void assign_rank_and_crowding_distance(population *new_pop);
 
-void report_pop (population *pop, FILE *fpt);
-void report_feasible (population *pop, FILE *fpt);
-void report_ind (individual *ind, FILE *fpt);
+/* Functions from report.c */
+void report_pop(population *pop, FILE *fpt);
+void report_feasible(population *pop, FILE *fpt);
+void report_ind(individual *ind, FILE *fpt);
 
+/* Functions from sort.c */
 void quicksort_front_obj(population *pop, int objcount, int obj_array[], int obj_array_size);
 void q_sort_front_obj(population *pop, int objcount, int obj_array[], int left, int right);
 void quicksort_dist(population *pop, int *dist, int front_size);
@@ -159,6 +167,7 @@ void q_sort_dist(population *pop, int *dist, int left, int right);
 void selection(population *old_pop, population *new_pop, problem_instance *pi);
 individual* tournament (individual *ind1, individual *ind2);
 
+/* Functions from problem_instance.c */
 int isAPOI(int name, problem_instance pi);
 int getNodeId(int name, problem_instance pi);
 void printProblemInstance(problem_instance *pi);
