@@ -4,6 +4,7 @@
 # include <stdlib.h>
 # include <math.h>
 # include <unistd.h>
+# include <string.h>
 
 # include "global.h"
 # include "rand.h"
@@ -49,12 +50,18 @@ int main (int argc, char **argv) {
 
 	problem_instance *pi = malloc(sizeof(problem_instance));
 	char *instance_route;
+	char *instance_name;
+	char fpt1_route[256];
+	char fpt2_route[256];
+	char fpt3_route[256];
+	char fpt4_route[256];
+	char fpt5_route[256];
 	population *parent_pop;
 	population *child_pop;
 	population *mixed_pop;
 
 	if (argc < 2) {
-		printf("\n Usage ./nsga2r instance_route random_seed popsize ngen pcross pmut \n ./nsga2r c101.dat 0.123 100 100 0.6 0.01\n");
+		printf("\n Usage ./nsga2r instance_route random_seed popsize ngen pcross pmut \n ./nsga2r Instances/c101.dat 0.123 2500 200 0.6 0.01\n");
 		exit(1);
 	}
 
@@ -64,18 +71,30 @@ int main (int argc, char **argv) {
 		exit(1);
 	}
 
-	fpt1 = fopen("initial_pop.out","w");
-	fpt2 = fopen("final_pop.out","w");
-	fpt3 = fopen("best_pop.out","w");
-	fpt4 = fopen("all_pop.out","w");
-	fpt5 = fopen("params.out","w");
+	instance_route = argv[1];
+	instance_name = strrchr(instance_route, '/');
+	if (instance_name != NULL) {
+		instance_name++;
+	} else {
+		instance_name = instance_route;
+	}
+	snprintf(fpt1_route, sizeof(fpt1_route), "Outputs/initial_pop_%s.out", instance_name);
+	snprintf(fpt2_route, sizeof(fpt2_route), "Outputs/final_pop_%s.out", instance_name);
+	snprintf(fpt3_route, sizeof(fpt3_route), "Outputs/best_pop_%s.out", instance_name);
+	snprintf(fpt4_route, sizeof(fpt4_route), "Outputs/all_pop_%s.out", instance_name);
+	snprintf(fpt5_route, sizeof(fpt4_route), "Outputs/params_%s.out", instance_name);
+
+	fpt1 = fopen(fpt1_route,"w");
+	fpt2 = fopen(fpt2_route,"w");
+	fpt3 = fopen(fpt3_route,"w");
+	fpt4 = fopen(fpt4_route,"w");
+	fpt5 = fopen(fpt5_route,"w");
 	fprintf(fpt1,"# This file contains the data of initial population\n");
 	fprintf(fpt2,"# This file contains the data of final population\n");
 	fprintf(fpt3,"# This file contains the data of final feasible population (if found)\n");
 	fprintf(fpt4,"# This file contains the data of all generations\n");
 	fprintf(fpt5,"# This file contains information about inputs as read by the program\n");
 
-	instance_route = argv[1];
 	readInputFile(instance_route, pi);
 
 	popsize = atoi(argv[3]);
