@@ -1,8 +1,8 @@
-/NSGA II/all_pop.out
-/NSGA II/best_pop.out
-/NSGA II/final_pop.out
-/NSGA II/initial_pop.out
-/NSGA II/params.out
-/NSGA II/c101.dat
+/Frentes de Pareto/Outputs
+/Hipervolumenes/Outputs AMPL
+/Hipervolumenes/Outputs NSGA-II
+/NSGA II/Instances
+/NSGA II/Outputs
 /NSGA II/nsga2r
+/NSGA II/*.o
 .vscode/

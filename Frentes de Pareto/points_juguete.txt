@@ -1,0 +1,6 @@
+archivo	fuente	F1	F2	F3
+juguete.txt	AMPL	-205	-5	5
+juguete.txt	AMPL	-200	-4	0
+juguete.txt	AMPL	-230	-4	30
+juguete.txt	AMPL	-55	-5	15
+juguete.txt	AMPL	-60	-4	0

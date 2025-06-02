@@ -42,12 +42,14 @@ int angle2;
 
 int main (int argc, char **argv) {
 	int i;
+	int debug;
 	FILE *fpt1;
 	FILE *fpt2;
 	FILE *fpt3;
 	FILE *fpt4;
 	FILE *fpt5;
 
+	debug = 0;
 	problem_instance *pi = malloc(sizeof(problem_instance));
 	char *instance_route;
 	char *instance_name;
@@ -61,7 +63,7 @@ int main (int argc, char **argv) {
 	population *mixed_pop;
 
 	if (argc < 2) {
-		printf("\n Usage ./nsga2r instance_route random_seed popsize ngen pcross pmut \n ./nsga2r Instances/c101.dat 0.123 2500 200 0.6 0.01\n");
+		printf("\n Usage ./nsga2r instance_route random_seed popsize ngen pcross pmut \n ./nsga2r Instances/c101.dat 0.123 500 2500 0.6 0.01\n");
 		exit(1);
 	}
 
@@ -78,11 +80,11 @@ int main (int argc, char **argv) {
 	} else {
 		instance_name = instance_route;
 	}
-	snprintf(fpt1_route, sizeof(fpt1_route), "Outputs/initial_pop_%s.out", instance_name);
-	snprintf(fpt2_route, sizeof(fpt2_route), "Outputs/final_pop_%s.out", instance_name);
-	snprintf(fpt3_route, sizeof(fpt3_route), "Outputs/best_pop_%s.out", instance_name);
-	snprintf(fpt4_route, sizeof(fpt4_route), "Outputs/all_pop_%s.out", instance_name);
-	snprintf(fpt5_route, sizeof(fpt4_route), "Outputs/params_%s.out", instance_name);
+	snprintf(fpt1_route, sizeof(fpt1_route), "Outputs/initial_pop_%s_%.3f.out", instance_name, seed);
+	snprintf(fpt2_route, sizeof(fpt2_route), "Outputs/final_pop_%s_%.3f.out", instance_name, seed);
+	snprintf(fpt3_route, sizeof(fpt3_route), "Outputs/best_pop_%s_%.3f.out", instance_name, seed);
+	snprintf(fpt4_route, sizeof(fpt4_route), "Outputs/all_pop_%s_%.3f.out", instance_name, seed);
+	snprintf(fpt5_route, sizeof(fpt4_route), "Outputs/params_%s_%.3f.out", instance_name, seed);
 
 	fpt1 = fopen(fpt1_route,"w");
 	fpt2 = fopen(fpt2_route,"w");
@@ -125,7 +127,7 @@ int main (int argc, char **argv) {
 		exit (1);
 	}
 
-	printf("\n Input data successfully entered, now performing initialization \n");
+	if (debug) printf("\n Input data successfully entered, now performing initialization \n");
 	fprintf(fpt5,"\n Population size = %d",popsize);
 	fprintf(fpt5,"\n Number of generations = %d",ngen);
 	fprintf(fpt5,"\n Number of objective functions = %d",n_objectives);
@@ -167,18 +169,18 @@ int main (int argc, char **argv) {
 
 	randomize();
 	initialize_pop(parent_pop, pi);
-	printf("\n Initialization done, now performing first generation\n");
+	if (debug) printf("\n Initialization done, now performing first generation\n");
 	decode_pop(parent_pop);
-	printf("\n Decode done\n");
+	if (debug) printf("\n Decode done\n");
 	evaluate_pop(parent_pop, pi);
-	printf("\n Evaluate done\n");
+	if (debug) printf("\n Evaluate done\n");
 	assign_rank_and_crowding_distance(parent_pop);
-	printf("\n Rank and Crowding distance done\n");
+	if (debug) printf("\n Rank and Crowding distance done\n");
 	report_pop(parent_pop, fpt1);
-	printf("\n Report done\n");
+	if (debug) printf("\n Report done\n");
 	fprintf(fpt4,"# gen = 1\n");
 	report_pop(parent_pop,fpt4);
-	printf("\n gen = 1");
+	if (debug) printf("\n gen = 1");
 	fflush(stdout);
 
 	/*if (choice!=0)
@@ -202,9 +204,9 @@ int main (int argc, char **argv) {
 		fprintf(fpt4,"# gen = %d\n",i);
 		report_pop(parent_pop,fpt4);
 		fflush(fpt4);
-		printf("\n gen = %d",i);
+		if (debug) printf("\n gen = %d",i);
 	}
-	printf("\n Generations finished, now reporting solutions");
+	if (debug) printf("\n Generations finished, now reporting solutions");
 	report_pop(parent_pop,fpt2);
 	report_feasible(parent_pop,fpt3);
 	if (nreal != 0) {
@@ -237,6 +239,6 @@ int main (int argc, char **argv) {
 	free(parent_pop);
 	free(child_pop);
 	free(mixed_pop);
-	printf("\n Routine successfully exited \n");
+	if (debug) printf("\n Routine successfully exited \n");
 	return (0);
 }

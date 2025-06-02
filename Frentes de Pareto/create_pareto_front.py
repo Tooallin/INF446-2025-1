@@ -1,84 +1,80 @@
+import os
+import pandas as pd
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-from matplotlib.ticker import FormatStrFormatter
+from matplotlib.ticker import MaxNLocator
 
-JUGUETE_POINTS = {
-	"1":  (0.891775, 1       , 0.83871  ),
-	"2":  (0.891775, 1       , 0.83871  ),
-	"3":  (0.87013 , 0.833333, 1        ),
-	"4":  (0.891775, 1       , 0.83871  ),
-	"5":  (0.87013 , 0.833333, 1        ),
-	"6":  (0.87013 , 0.833333, 1        ),
-	"7":  (0.891775, 1       , 0.83871  ),
-	"8":  (0.87013 , 0.833333, 1        ),
-	"9":  (1       , 0.833333, 0.0322581),
-	"10": (0.242424, 1       , 0.516129 ),
-	"11": (0.264069, 0.833333, 1        ),
-}
+def es_dominado(p1, p2):
+	return all(x >= y for x, y in zip(p1, p2)) and any(x > y for x, y in zip(p1, p2))
 
-C101_POINTS = {
-	"1":  (1       , 0.9375, 1       ),
-	"2":  (0.963009, 1     , 1       ),
-	"3":  (1       , 0.875 , 1       ),
-	"4":  (1       , 0.9375, 1       ),
-	"5":  (0.963009, 1     , 1       ),
-	"6":  (1       , 0.9375, 1       ),
-	"7":  (1       , 0.9375, 1       ),
-	"8":  (1       , 0.9375, 1       ),
-	"9":  (1       , 0.9375, 1       ),
-	"10": (0.408138, 1     , 0.295775),
-	"11": (0.112207, 0.3125, 1       ),
-}
+def obtener_no_dominados(puntos):
+	no_dominados = []
+	for i, p in enumerate(puntos):
+		if not any(es_dominado(p, q) for j, q in enumerate(puntos) if i != j):
+			no_dominados.append(i)
+	return no_dominados
 
-def dominates(p, q):
-	return all(p_i >= q_i for p_i, q_i in zip(p, q)) and any(p_i > q_i for p_i, q_i in zip(p, q))
+# Carpeta con archivos
+carpeta = "./"
+archivos = [f for f in os.listdir(carpeta) if f.startswith("points_") and f.endswith(".txt")]
 
-def pareto_front(points_dict):
-	points = list(points_dict.values())
-	pareto = []
-	for p in points:
-		if not any(dominates(other, p) for other in points if other != p):
-			pareto.append(p)
-	return pareto
+for archivo in archivos:
+	df = pd.read_csv(os.path.join(carpeta, archivo), sep="\t")
 
-def plot_pareto_front(points_dict):
-	all_points = list(points_dict.values())
-	pareto = pareto_front(points_dict)
-	dominated = [p for p in all_points if p not in pareto]
+	# Determinar índices no dominados
+	puntos = df[["F1", "F2", "F3"]].values.tolist()
+	idx_no_dominados = obtener_no_dominados(puntos)
+	df_no_dominados = df.iloc[idx_no_dominados]
+	df_dominados = df.drop(index=idx_no_dominados)
 
-	fig = plt.figure(figsize=(8, 6))
-	ax = fig.add_subplot(111, projection='3d')
+	# Preparar figura
+	fig = plt.figure(figsize=(8, 7))
+	ax = fig.add_subplot(111, projection='3d', facecolor='white')
 
-	# Puntos dominados en azul
-	if dominated:
-		x_d, y_d, z_d = zip(*dominated)
-		ax.scatter(x_d, y_d, z_d, c='blue', s=40, label='Dominados')
+	# Dibujar dominados con menor alpha y colores claros
+	for fuente, color, marker in [('AMPL', '#6495ED', 'o'), ('NSGA-II', '#F08080', 'D')]:
+		sub = df_dominados[df_dominados["fuente"] == fuente]
+		if not sub.empty:
+			ax.scatter(sub["F1"], sub["F2"], sub["F3"],
+			           c=color, label=f'{fuente} (dom)', alpha=0.4, s=50, edgecolors='k', marker=marker)
 
-	# Frente de Pareto en rojo
-	if pareto:
-		x_p, y_p, z_p = zip(*pareto)
-		ax.scatter(x_p, y_p, z_p, c='red', s=50, label='Frente de Pareto')
+	# Dibujar no dominados con colores oscuros
+	for fuente, color, marker in [('AMPL', '#00008B', 'o'), ('NSGA-II', '#8B0000', 'D')]:
+		sub = df_no_dominados[df_no_dominados["fuente"] == fuente]
+		if not sub.empty:
+			ax.scatter(sub["F1"], sub["F2"], sub["F3"],
+			           c=color, label=f'{fuente} (no dom)', alpha=1.0, s=50, edgecolors='k', marker=marker)
 
-	# Estética
-	ax.set_xlabel('FO 1', fontsize=10, labelpad=8)
-	ax.set_ylabel('FO 2', fontsize=10, labelpad=8)
-	ax.set_zlabel('FO 3', fontsize=10, labelpad=8)
-	ax.set_title('Frente de Pareto vs Dominados (Instancia c101.dat)', fontsize=12)
-	#ax.set_title('Frente de Pareto vs Dominados (Instancia juguete.dat)', fontsize=12)
+	# Ejes
+	ax.set_xlabel("F1", fontsize=12, labelpad=15, fontweight='bold')
+	ax.set_ylabel("F2", fontsize=12, labelpad=15, fontweight='bold')
+	ax.set_zlabel("F3", fontsize=12, labelpad=20, fontweight='bold')
+	ax.zaxis.set_label_coords(-0.1, 0.5)
 
-	ax.xaxis.set_major_formatter(FormatStrFormatter('%.2f'))
-	ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
-	ax.zaxis.set_major_formatter(FormatStrFormatter('%.2f'))
-	ax.tick_params(axis='both', which='major', labelsize=8)
+	# Título
+	titulo = archivo.replace("points_", "").replace(".txt", ".dat").lower()
+	ax.set_title(f"Frente Pareto - {titulo}", fontsize=14, pad=20, fontweight='bold')
 
-	ax.xaxis.set_pane_color((0.95, 0.95, 0.95, 1.0))
-	ax.yaxis.set_pane_color((0.95, 0.95, 0.95, 1.0))
-	ax.zaxis.set_pane_color((0.95, 0.95, 0.95, 1.0))
+	# Estilo general
+	ax.legend(loc='best', fontsize=10)
+	ax.view_init(elev=20, azim=135)
+	ax.grid(True)
+	ax.tick_params(axis='both', which='major', labelsize=10)
 
-	ax.grid(True, linestyle=':', linewidth=0.5)
-	ax.legend()
-	plt.tight_layout()
-	plt.show()
+	ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+	ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+	ax.zaxis.set_major_locator(MaxNLocator(integer=True))
 
-# Ejecutar la función
-plot_pareto_front(C101_POINTS)
+	# Holgura en ejes
+	for dim, col in zip([ax.set_xlim, ax.set_ylim, ax.set_zlim], ["F1", "F2", "F3"]):
+		min_val = df[col].min()
+		max_val = df[col].max()
+		margin = 0.05 * (max_val - min_val) if max_val != min_val else 1
+		dim(min_val - margin, max_val + margin)
+
+	# Guardar imagen
+	nombre_img = f"pareto_front_{archivo.replace('points_', '').replace('.txt', '').lower()}.png"
+	plt.savefig(nombre_img, dpi=300)
+	plt.close()
+
+	print(f"✅ Gráfico generado: {nombre_img}")
